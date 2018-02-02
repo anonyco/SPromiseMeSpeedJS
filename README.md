@@ -7,7 +7,7 @@ To use, simply drop the following snippet of HTML code into your `<head>` before
 ```HTML
 <script src="https://www.dropbox.com/s/qtl3zwrlduyet0i/promiseMeSpeedDEBUG.min.js?dl=2"></script>
 ```
-Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call `document.write` inside your script.<br />
+Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call `document.write` inside your script.<br /><br />
 *Before:*
 ```HTML
 <!doctype HTML>
