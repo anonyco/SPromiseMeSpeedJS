@@ -1,5 +1,9 @@
 # PromiseMeSpeed
-PromiseMeSpeed is the javascript library the promises you speedy ES6 promises. The whole purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts you have that use PromiseMeSpeed.
+PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~9-12x faster than Chrome's native promises and ~2-9x faster than Bluebird's promises. The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises.
+
+# Quick Start
+
+To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts that use PromiseMeSpeed.
 ```HTML
 <script src="https://www.dropbox.com/s/qtl3zwrlduyet0i/promiseMeSpeedDEBUG.min.js?dl=2"></script>
 ```
@@ -72,10 +76,10 @@ Example code snippets:
 ```
 
 # Benchmarks
-If your a sensible guy like myself then you shouldn't take my word for the speed of PromiseMeSpeed. Rather, take the word of theese benchmarks:
+If you are a sensible guy like me, then you shouldn't take my word for the speed of PromiseMeSpeed. Rather, take the word of these benchmarks:
 
 ### Casual Promising
-Benchmark Code (runned in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js)
+Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js)
 ```Javascript
 (async function(){
 	"use strict";
@@ -140,7 +144,7 @@ SPromiseR3:  0.012870213962348833ms
 ```
 
 ### Synchronous Hellhole of Death Promising
-Benchmark code (runned in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
+Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
 ```Javascirpt
 (async function(){
 	"use strict";
@@ -205,7 +209,7 @@ SPromiseR3:  0.001690507368607945ms
 ```
 
 ### Await Promising
-Benchmark Code (runned in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
+Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
 ```Javascript
 (async function(){
 	"use strict";
@@ -269,7 +273,7 @@ SPromiseR3:  0.22957859848468093ms
 ```
 
 # PromiseMeSpeed.min.js VS PromiseMeSpeedDEBUG.min.js
-The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds in extra type checking and notifies you when things go wrong. For some of the errors, it even gives a suggestion on how to fix them. However, theese checks come at a cost: performance. If you have already written your code good enough to not need theese checks, then use PromiseMeSpeed.min.js for evem better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
+The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds many extra type checks and notifies you when the wrong type of object is passed to the SPromise API. For some of the errors, it even gives a suggestion on how to fix them. However, these checks come at a cost: performance. If you have already written your code well enough to not need these checks, then use PromiseMeSpeed.min.js for even better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
 
 ```HTML
 <script src="https://www.dropbox.com/s/vkva93guz03ybb5/promiseMeSpeed.min.js?dl=2"></script>
