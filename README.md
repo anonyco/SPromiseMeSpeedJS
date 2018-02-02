@@ -1,5 +1,5 @@
-# promiseMeSpeed
-promiseMeSpeed is the javascript library the promises you speedy ES6 promises. The whole purpose of promiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts you have that use promiseMeSpeed.
+# PromiseMeSpeed
+PromiseMeSpeed is the javascript library the promises you speedy ES6 promises. The whole purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts you have that use PromiseMeSpeed.
 ```HTML
 <script src="https://www.dropbox.com/s/qtl3zwrlduyet0i/promiseMeSpeedDEBUG.min.js?dl=2"></script>
 ```
@@ -28,7 +28,7 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 ```
 
 # API
-promiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
+PromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
 
 1. It is called without the `new` operator.
 2. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
@@ -72,7 +72,7 @@ Example code snippets:
 ```
 
 # Benchmarks
-If your a sensible guy like myself then you shouldn't take my word for the speed of promiseMeSpeed. Rather, take the word of theese benchmarks:
+If your a sensible guy like myself then you shouldn't take my word for the speed of PromiseMeSpeed. Rather, take the word of theese benchmarks:
 
 ### Casual Promising
 Benchmark Code (runned in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js)
@@ -268,12 +268,12 @@ SPromiseR2:  0.18936316287991675ms
 SPromiseR3:  0.22957859848468093ms
 ```
 
-# promiseMeSpeed.min.js VS promiseMeSpeedDEBUG.min.js
-The main difference between the two versions is that promiseMeSpeedDEBUG is intended for development. It adds in extra type checking and notifies you when things go wrong. For some of the errors, it even gives a suggestion on how to fix them. However, theese checks come at a cost: performance. If you have already written your code good enough to not need theese checks, then use promiseMeSpeed.min.js for evem better performance. promiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from promiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with promiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use promiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
+# PromiseMeSpeed.min.js VS PromiseMeSpeedDEBUG.min.js
+The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds in extra type checking and notifies you when things go wrong. For some of the errors, it even gives a suggestion on how to fix them. However, theese checks come at a cost: performance. If you have already written your code good enough to not need theese checks, then use PromiseMeSpeed.min.js for evem better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
 
 ```HTML
 <script src="https://www.dropbox.com/s/vkva93guz03ybb5/promiseMeSpeed.min.js?dl=2"></script>
 ```
 
 # Think Before You Pull!
-The purpose of promiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of promiseMeSpeed is **not** to be a full featured golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
+The purpose of PromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of PromiseMeSpeed is **not** to be a full featured golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
