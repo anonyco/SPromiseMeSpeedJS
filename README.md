@@ -81,19 +81,20 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 ```Javascript
 (async function(){
 	"use strict";
+	var resStr = "";
 	var nativePromise = window.Promise;
 	function test(str, f){
 		return new nativePromise(function(acc){
             var tests=[], tmp=0, SPromise = window.SPromise;
-            var cycleCount=222, intV=requestIdleCallback(function theeFunc(){
+            var cycleCount=13, intV=requestIdleCallback(function theeFunc(){
                 "use strict";
                 if (--cycleCount < 0) {
                     var res = tests.reduce((a, b) => a + b) / tests.length;
-                    console.log(str, res + "ms");
+                    resStr += "\n" + str + res + "ms";
 					acc();
                     return;
                 }
-                var k = performance.now(), i = 0, Len = 16;
+                var k = performance.now(), i = 0, Len = 8;
                 (function test(v){
                     f(function(k){
                         k(v+(v*13%11));
@@ -114,31 +115,38 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("NativeR1:   ", function(x){return new nativePromise(x)});
 	await test("NativeR2:   ", function(x){return new nativePromise(x)});
 	await test("NativeR3:   ", function(x){return new nativePromise(x)});
+	await test("NativeR4:   ", function(x){return new nativePromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
 	(new Function(document.body.innerText))();
 	var bbPromise = window.Promise;
 	await test("BluebirdR1: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR2: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR3: ", function(x){return new bbPromise(x)});
+	await test("BluebirdR4: ", function(x){return new bbPromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
 	var SPromise = window.SPromise;
 	await test("SPromiseR1: ", function(x){return SPromise(x)});
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
+	await test("SPromiseR4: ", function(x){return SPromise(x)});
 	window.Promise = nativePromise;
+	console.log(resStr);
 })();
 ```
 Console output:
 ```
-NativeR1:    0.14081925676211607ms
-NativeR2:    0.13913006756637195ms
-NativeR3:    0.17233389639426736ms
-BluebirdR1:  0.17266328829059563ms
-BluebirdR2:  0.1277702702715393ms
-BluebirdR3:  0.11450028153312569ms
-SPromiseR1:  0.01383164414489927ms
-SPromiseR2:  0.010425112613472618ms
-SPromiseR3:  0.012870213962348833ms
+NativeR1:   0.20504807692307517ms
+NativeR2:   0.2591346153846574ms
+NativeR3:   0.15860576923077693ms
+NativeR4:   0.20966346153842935ms
+BluebirdR1: 0.34370192307694825ms
+BluebirdR2: 0.27802884615383705ms
+BluebirdR3: 0.289326923076907ms
+BluebirdR4: 0.2948076923076909ms
+SPromiseR1: 0.031778846153848954ms
+SPromiseR2: 0.05201923076922937ms
+SPromiseR3: 0.01673076923074964ms
+SPromiseR4: 0.030432692307683213ms
 ```
 
 ### Synchronous Hellhole of Death Promising
@@ -146,19 +154,20 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 ```Javascirpt
 (async function(){
 	"use strict";
+	var resStr = "";
 	var nativePromise = window.Promise;
 	function test(str, f){
 		return new nativePromise(function(acc){
             var tests=[], tmp=0, SPromise = window.SPromise;
-            var cycleCount=22, intV=requestIdleCallback(function theeFunc(){
+            var cycleCount=5, intV=requestIdleCallback(function theeFunc(){
                 "use strict";
                 if (--cycleCount < 0) {
                     var res = tests.reduce((a, b) => a + b) / tests.length;
-                    console.log(str, res + "ms");
+                    resStr += "\n" + str + res + "ms";
 					acc();
                     return;
                 }
-                var k = performance.now(), i = 0, Len = 8192; // 8192 is, well, very abusive to promises
+                var k = performance.now(), i = 0, Len = 32768;
                 (function test(v){
                     f(function(k){
                         k(v+(v*13%11));
@@ -179,31 +188,38 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("NativeR1:   ", function(x){return new nativePromise(x)});
 	await test("NativeR2:   ", function(x){return new nativePromise(x)});
 	await test("NativeR3:   ", function(x){return new nativePromise(x)});
+	await test("NativeR4:   ", function(x){return new nativePromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
 	(new Function(document.body.innerText))();
 	var bbPromise = window.Promise;
 	await test("BluebirdR1: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR2: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR3: ", function(x){return new bbPromise(x)});
+	await test("BluebirdR4: ", function(x){return new bbPromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
 	var SPromise = window.SPromise;
 	await test("SPromiseR1: ", function(x){return SPromise(x)});
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
+	await test("SPromiseR4: ", function(x){return SPromise(x)});
 	window.Promise = nativePromise;
+	console.log(resStr);
 })();
 ```
 Console output:
 ```
-NativeR1:    0.09172130237926134ms
-NativeR2:    0.09093966397372148ms
-NativeR3:    0.0929469992897726ms
-BluebirdR1:  0.0035457541725850998ms
-BluebirdR2:  0.0022960870916192647ms
-BluebirdR3:  0.0025248579545454593ms
-SPromiseR1:  0.0021386163884940775ms
-SPromiseR2:  0.0014447021484376356ms
-SPromiseR3:  0.001690507368607945ms
+NativeR1:   0.08879110717773404ms
+NativeR2:   0.09138412475585973ms
+NativeR3:   0.09104553222656211ms
+NativeR4:   0.09136700439453165ms
+BluebirdR1: 0.0021338195800783668ms
+BluebirdR2: 0.001447601318359837ms
+BluebirdR3: 0.0014637451171877203ms
+BluebirdR4: 0.001489685058594148ms
+SPromiseR1: 0.0010407409667971379ms
+SPromiseR2: 0.0008829040527349008ms
+SPromiseR3: 0.0009582824707029758ms
+SPromiseR4: 0.0009214782714849435ms
 ```
 
 ### Await Promising
@@ -211,6 +227,7 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 ```Javascript
 (async function(){
 	"use strict";
+	var resStr="";
 	var nativePromise = window.Promise;
 	function test(str, f){
 		return new nativePromise(function(acc){
@@ -219,7 +236,7 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
                 "use strict";
                 if (--cycleCount < 0) {
                     var res = tests.reduce((a, b) => a + b) / tests.length;
-                    console.log(str, res + "ms");
+                    resStr += "\n" + str + res + "ms";
 					          acc();
                     return;
                 }
@@ -255,19 +272,20 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
 	window.Promise = nativePromise;
+	console.log(resStr);
 })();
 ```
 Console output:
 ```
-NativeR1:    0.22994554924265354ms
-NativeR2:    0.1941098484843899ms
-NativeR3:    0.23938920454516352ms
-BluebirdR1:  5.123219696969362ms
-BluebirdR2:  5.130170454544978ms
-BluebirdR3:  5.053499053030189ms
-SPromiseR1:  0.18391335227263908ms
-SPromiseR2:  0.18936316287991675ms
-SPromiseR3:  0.22957859848468093ms
+NativeR1:   0.19717092803028374ms
+NativeR2:   0.21796875000000276ms
+NativeR3:   0.2995241477272595ms
+BluebirdR1: 5.19542140151517ms
+BluebirdR2: 5.168622159090939ms
+BluebirdR3: 5.096112689393976ms
+SPromiseR1: 0.2274715909090832ms
+SPromiseR2: 0.18396306818184519ms
+SPromiseR3: 0.1810298295454507ms
 ```
 [Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own native barf instead of trying to swallow someone else's barf (Bluebird). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
 
