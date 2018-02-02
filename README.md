@@ -14,7 +14,6 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 <html><head>
 <script src="https://www.dropbox.com/s/qtl3zwrlduyet0i/promiseMeSpeedDEBUG.min.js?dl=2"></script>
 <script src="/path/to/my/script.js"></script>
-<script src>
 </head><body>
     ...
 </body></html>
@@ -25,7 +24,6 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 <html><head>
 <script src="https://www.dropbox.com/s/qtl3zwrlduyet0i/promiseMeSpeedDEBUG.min.js?dl=2" defer=""></script>
 <script src="/path/to/my/script.js" defer=""></script>
-<script src>
 </head><body>
     ...
 </body></html>
