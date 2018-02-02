@@ -8,7 +8,7 @@
 	const persuadoStack = []; // Defered loading of promises to outermost promise scope so as to not exceed the stack level
 	const proxy = function(func){func(this)};
 	const exec = function(x){x()};
-	const promiseBufferLvl = 64; // length of the promise buffer for double stack buffering
+	const promiseBufferLvl = 256; // length of the promise buffer for double stack buffering
 	const Promise = window.Promise || Object.create(null);
 	const isPromise = SPromise["isPromise"] = function(x){
 		return !!x && (x.constructor === SPromise || x.constructor === Promise);//(x instanceof SPromise) || (x instanceof Promise);
@@ -46,17 +46,24 @@
 			persuadoStack.push(
 				func.bind(undefined, acceptP, rejectP)
 			);
-			++pStackLength;
+			pStackLength ++;//+= 3;
 		} else {
-			++promiseLevel;
-			if (promiseLevel > promiseBufferLvl) isInsidePromise = true;
-			func(acceptP, rejectP);
-			--promiseLevel;
-			if (!promiseLevel) {
-				var i = 0;
-				while (i !== pStackLength) persuadoStack[i++]();
-				persuadoStack.length = pStackLength = 0;
-				isInsidePromise = false;
+			if (promiseLevel === promiseBufferLvl){
+				isInsidePromise = true;
+				func(acceptP, rejectP);
+			} else {
+				++promiseLevel;
+				func(acceptP, rejectP);
+				if (promiseLevel === 1) { // if this is the outermost promise
+					if (pStackLength) {
+						do {
+							isInsidePromise = false;
+							persuadoStack.shift()();
+						} while (--pStackLength);
+					}
+					isInsidePromise = false;
+				}
+				--promiseLevel;
 			}
 		}
 		var retObj = {
@@ -71,15 +78,13 @@
 				}
 
 				return SPromise(function(accept, reject){
-					if (tFunc){
-						if (thenFuncs !== null)  thenFuncs.push(tFunc);	 else thenFuncs	 = [ tFunc ];
-					}
-					if (cFunc) {
-						if (catchFuncs !== null) catchFuncs.push(cFunc); else catchFuncs = [ cFunc ];
-					}
 					if (stage === undefined){
-						if (tFunc) thenFuncs.push(function(){return accept(tFunc(_))});
-						if (cFunc) catchFuncs.push(function(){return reject(cFunc(_))});
+						if (tFunc){
+							if (thenFuncs !== null)  thenFuncs.push(tFunc);	 else thenFuncs	 = [ tFunc ];
+						}
+						if (cFunc) {
+							if (catchFuncs !== null) catchFuncs.push(cFunc); else catchFuncs = [ cFunc ];
+						}
 					} else if (stage === true) {
 						if (tFunc) accept( tFunc(retVal) );
 					} else {
@@ -99,7 +104,7 @@
 
 				return SPromise(function(accept, reject){
 					if (stage === undefined){
-						if (cFunc) catchFuncs.push(function(){return reject(cFunc(_))});
+						if (cFunc) catchFuncs.push(function(){return reject(cFunc(retVal))});
 					} else {
 						if (cFunc) reject( cFunc(retVal) );
 					}
@@ -130,20 +135,27 @@
 				if (isInsidePromise) {
 					return SPromise(function(accept, reject){
 						persuadoStack.push(
-							accept.bind(undefined, f.bind(undefined, val))
+							function(){ accept(f(val)) }//, null, null
 						);
-						++pStackLength;
+						pStackLength ++;//+= 3;
 					});
 				} else {
-					++promiseLevel;
-					if (promiseLevel > promiseBufferLvl) isInsidePromise = true;
-					var newVal = f(val);
-					--promiseLevel;
-					if (!promiseLevel) {
-						var i = 0;
-						while (i !== pStackLength) persuadoStack[i++]();
-						persuadoStack.length = pStackLength = 0;
-						isInsidePromise = false;
+					if (promiseLevel === promiseBufferLvl){
+						isInsidePromise = true;
+						var newVal = f(val);
+					} else {
+						++promiseLevel;
+						var newVal = f(val);
+						if (promiseLevel === 1) { // if this is the outermost promise
+							if (pStackLength) {
+								do {
+									isInsidePromise = false;
+									persuadoStack.shift()();
+								} while (--pStackLength);
+							}
+							isInsidePromise = false;
+						}
+						--promiseLevel;
 					}
 					return resolve(newVal);
 				}
@@ -152,39 +164,107 @@
 				// synchonously defered stacking allows for super performance
 				if (isInsidePromise) {
 					persuadoStack.push(
-						f.bind(undefined, val)
+						f//, null, null 
 					);
+					pStackLength ++;//+= 3;
 				} else {
-					++promiseLevel;
-					if (promiseLevel > promiseBufferLvl) isInsidePromise = true;
-					f(val);
-					--promiseLevel;
-					if (!promiseLevel) {
-						var i = 0;
-						while (i !== pStackLength) persuadoStack[i++]();
-						persuadoStack.length = pStackLength = 0;
-						isInsidePromise = false;
+					if (promiseLevel === promiseBufferLvl){
+						isInsidePromise = true;
+						f();
+					} else {
+						++promiseLevel;
+						f();
+						if (promiseLevel === 1 && isInsidePromise) { // if this is the outermost promise
+							do {
+								isInsidePromise = false;
+								persuadoStack.shift()();
+							} while (--pStackLength);
+							isInsidePromise = false;
+						}
+						--promiseLevel;
 					}
 				}
 				return curObj;
 			},
-			"catch": function(){
+			"catch": function(){return curObj}
+		}
+		return curObj;
+	};
+	SPromise["reject"] = function reject(val){
+		var curObj = {
+			"then": function(){return curObj},
+			"finally": function(f){
+				// synchonously defered stacking allows for super performance
+				if (isInsidePromise) {
+					persuadoStack.push(
+						f//, null, null 
+					);
+					pStackLength ++;//+= 3;
+				} else {
+					if (promiseLevel === promiseBufferLvl){
+						isInsidePromise = true;
+						f();
+					} else {
+						++promiseLevel;
+						f();
+						if (promiseLevel === 1) { // if this is the outermost promise
+							if (pStackLength) {
+								do {
+									isInsidePromise = false;
+									persuadoStack.shift()();
+								} while (--pStackLength);
+							}
+							isInsidePromise = false;
+						}
+						--promiseLevel;
+					}
+				}
 				return curObj;
+			},
+			"catch": function(f){
+				// synchonously defered stacking allows for super performance
+				if (isInsidePromise) {
+					return SPromise(function(accept, reject){
+						persuadoStack.push(
+							function(){ accept(f(val)) }//, null, null
+						);
+						pStackLength ++;//+= 3;
+					});
+				} else {
+					if (promiseLevel === promiseBufferLvl){
+						isInsidePromise = true;
+						var newVal = f(val);
+					} else {
+						++promiseLevel;
+						var newVal = f(val);
+						if (promiseLevel === 1) { // if this is the outermost promise
+							if (pStackLength) {
+								do {
+									isInsidePromise = false;
+									persuadoStack.shift()();
+								} while (--pStackLength);
+							}
+							isInsidePromise = false;
+						}
+						--promiseLevel;
+					}
+					return reject(newVal);
+				}
 			}
 		}
 		return curObj;
 	};
 	var hasWarnedAboutArguments = false;
-	SPromise["race"] = function(arr){
+	SPromise["race"] = function(promisesArray){
 		if (DEBUGMODE){
-			if (!arr || !arr.forEach || !Array.prototype.every.call(arr, function(x){return SPromise.isPromise(x)})){
+			if (!promisesArray || !promisesArray.forEach || !Array.prototype.every.call(promisesArray, function(x){return SPromise.isPromise(x)})){
 				// check to see if it is an array or an iterable object
-				console.error(Object.prototype.toString.call(fFunc) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.race.");
+				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.race.");
 				return SPromise.resolve();
 			}
-			if (!hasWarnedAboutArguments && !arr.length){
+			if (!hasWarnedAboutArguments && !promisesArray.length){
 				hasWarnedAboutArguments = true;
-				console.warn(Object.prototype.toString.call(fFunc) + " is an empty array of promises passed to SPromise")
+				console.warn(Object.prototype.toString.call(promisesArray) + " is an empty array of promises passed to SPromise")
 			}
 		}
 		return SPromise(function(accept, reject){
@@ -200,16 +280,16 @@
 			});
 		});
 	}
-	SPromise["all"] = function(arr){
+	SPromise["all"] = function(promisesArray){
 		if (DEBUGMODE){
 			if (!promisesArray || !promisesArray.forEach || !promisesArray.every || !promisesArray.every(function(x){return SPromise.isPromise(x)})){
 				// check to see if it is an array or an iterable object
-				console.error(Object.prototype.toString.call(fFunc) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to Promise.race.");
+				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to Promise.race.");
 				return SPromise.resolve();
 			}
 		}
 		return SPromise(function(accept, reject){
-			var leftToGo = arr.length;
+			var leftToGo = promisesArray.length;
 			promisesArray.forEach(function(Cur){
 				Cur.then(function(Val){
 					if (!--leftToGo){
