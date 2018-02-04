@@ -1,5 +1,5 @@
 # PromiseMeSpeed
-PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~9-12x faster than Chrome's native promises and ~2-9x faster than Bluebird's promises. The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises.
+PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~9-12x faster than Chrome's native promises and ~2-9x faster than Bluebird's promises. The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then condider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
 
 # Quick Start
 
@@ -7,7 +7,7 @@ To use, simply drop the following snippet of HTML code into your `<head>` before
 ```HTML
 <script src="https://www.dropbox.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=2"></script>
 ```
-Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call `document.write` inside your script.<br /><br />
+Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call evil `document.write` inside your script.<br /><br />
 *Before:*
 ```HTML
 <!doctype HTML>
