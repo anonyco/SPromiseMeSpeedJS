@@ -133,7 +133,7 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	console.log(resStr);
 })();
 ```
-Console output:
+Console output (lower numbers = lower promise delay = better):
 ```
 NativeR1:   0.20504807692307517ms
 NativeR2:   0.2591346153846574ms
@@ -206,7 +206,7 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	console.log(resStr);
 })();
 ```
-Console output:
+Console output (lower numbers = lower promise delay = better):
 ```
 NativeR1:   0.08879110717773404ms
 NativeR2:   0.09138412475585973ms
@@ -275,7 +275,7 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	console.log(resStr);
 })();
 ```
-Console output:
+Console output (lower numbers = lower promise delay = better):
 ```
 NativeR1:   0.19717092803028374ms
 NativeR2:   0.21796875000000276ms
@@ -287,7 +287,7 @@ SPromiseR1: 0.2274715909090832ms
 SPromiseR2: 0.18396306818184519ms
 SPromiseR3: 0.1810298295454507ms
 ```
-[Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own native barf instead of trying to swallow someone else's barf (Bluebird). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
+[Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
 
 
 # PromiseMeSpeed.min.js VS PromiseMeSpeedDEBUG.min.js
