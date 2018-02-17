@@ -5,14 +5,14 @@ PromiseMeSpeed is currently the fastest javascript library, *promising* speedy E
 
 To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts that use PromiseMeSpeed.
 ```HTML
-<script src="https://www.dropbox.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=2"></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0"></script>
 ```
 Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call evil `document.write` inside your script.<br /><br />
 *Before:*
 ```HTML
 <!doctype HTML>
 <html><head>
-<script src="https://www.dropbox.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=2"></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0"></script>
 <script src="/path/to/my/script.js"></script>
 </head><body>
     ...
@@ -22,7 +22,7 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 ```HTML
 <!doctype HTML>
 <html><head>
-<script src="https://www.dropbox.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=2" defer=""></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
 <script src="/path/to/my/script.js" defer=""></script>
 </head><body>
     ...
@@ -294,7 +294,7 @@ SPromiseR3: 0.1810298295454507ms
 The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds many extra type checks and notifies you when the wrong type of object is passed to the SPromise API. For some of the errors, it even gives a suggestion on how to fix them. However, these checks come at a cost: performance. If you have already written your code well enough to not need these checks, then use PromiseMeSpeed.min.js for even better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
 
 ```HTML
-<script src="https://www.dropbox.com/s/i8om2fcz5izdeoj/promiseMeSpeed.min.js?dl=2"></script>
+<script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/promiseMeSpeed.min.js?dl=0"></script>
 ```
 
 # Think Before You Pull!
