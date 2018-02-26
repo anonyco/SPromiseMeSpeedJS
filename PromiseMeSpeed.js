@@ -1,7 +1,7 @@
 // The javascript promise library that promises you SPEED, and lots of it
 (function(){
 	"use strict";
-	// the reason I use a variable like this is because closure compiler automaticly inlines and optimizes it
+	// the reason I use a variable like this is because closure compiler automatically inlines and optimizes it
 	///////////////////////
 	const DEBUGMODE = true;
 	///////////////////////
@@ -20,7 +20,7 @@
 	function SPromise(func){
 		// simple/super/speedy/synchronous promise
 		var retVal, stage, thenFuncs = null, catchFuncs = null, finallies = null;
-		// stage undefined = unfurfilled
+		// stage undefined = unfulfilled
 		// stage true = accepted
 		// stage false = rejected
 
