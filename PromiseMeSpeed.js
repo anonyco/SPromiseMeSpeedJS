@@ -70,10 +70,10 @@
 			"then": function(tFunc, cFunc){
 				if (DEBUGMODE){
 					if (tFunc && typeof tFunc !== "function"){
-						console.error(Object.prototype.toString.call(tFunc) + " is not valid function to be called after a successful promise");
+						console.error(Object.prototype.toString.call(tFunc) + " is not a valid function to be called after a successful promise");
 					}
 					if (cFunc && typeof cFunc !== "function"){
-						console.error(Object.prototype.toString.call(cFunc) + " is not valid function to be called after a rejected promise");
+						console.error(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
 					}
 				}
 
@@ -95,7 +95,7 @@
 			"catch": function(cFunc){
 				if (DEBUGMODE){
 					if (cFunc && typeof cFunc !== "function"){
-						console.error(Object.prototype.toString.call(cFunc) + " is not valid function to be called after a rejected promise");
+						console.error(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
 					}
 				}
 				if (cFunc) {
@@ -113,7 +113,7 @@
 			"finally": function(fFunc){
 				if (DEBUGMODE){
 					if (typeof fFunc !== "function"){
-						console.error(Object.prototype.toString.call(fFunc) + " is not valid function to be called 'finally' after promise");
+						console.error(Object.prototype.toString.call(fFunc) + " is not a valid function to be called 'finally' after promise");
 					}
 				}
 				if (stage === undefined) {
@@ -284,7 +284,7 @@
 		if (DEBUGMODE){
 			if (!promisesArray || !promisesArray.forEach || !promisesArray.every || !promisesArray.every(function(x){return SPromise.isPromise(x)})){
 				// check to see if it is an array or an iterable object
-				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to Promise.race.");
+				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.all.");
 				return SPromise.resolve();
 			}
 		}
