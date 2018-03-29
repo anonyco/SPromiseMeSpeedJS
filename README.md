@@ -34,15 +34,17 @@ PromiseMeSpeed gives you one and only one new global on the window object: `wind
 
 1. It is called without the `new` operator.
 2. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
-3. It is a hell of a lot faster than native Chromium promises, even with (suprise, suprise!) `await`.
+3. It is a lot faster than native Chromium promises, even with (suprise, suprise!) `await`.
 
 Example code snippets:
 ```HTML
 <!DOCTYPE HTML>
 <html><head>
+<title></title>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
 </head><body>
 <script>
-(function(){
+addEventListener("load", function(){
   "use strict";
   var SPromise = window.SPromise;
   SPromise.race([
@@ -60,7 +62,7 @@ Example code snippets:
     console.log(winner);
   });
   (async function(){
-    document.writeln(await SPromise(function(accept, reject){
+    document.body.insertAdjacentHTML("beforeend", await SPromise(function(accept, reject){
     // Don't ask me why synthetic promises are allowed to work with await. I myself am still
     // confused, but hey: it works and SPromise even somehow shockingly makes them faster!
       setTimeout(function(){
