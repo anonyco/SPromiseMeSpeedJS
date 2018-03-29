@@ -56,8 +56,8 @@ Example code snippets:
         accept("Native Promise wins this mockup that doesn't actually have any benchmarking practicality")
       }, 250)
     })
-  ]).then(function(){
-    
+  ]).then(function(winner){
+    console.log(winner);
   });
   (async function(){
     document.writeln(await SPromise(function(accept, reject){
