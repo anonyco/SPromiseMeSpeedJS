@@ -40,7 +40,7 @@ Example code snippets:
 ```HTML
 <!DOCTYPE HTML>
 <html><head>
-<title></title>
+<title>SPromise Test Example</title>
 <script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
 </head><body>
 <script>
@@ -59,16 +59,16 @@ addEventListener("load", function(){
       }, 250)
     })
   ]).then(function(winner){
-    console.log(winner);
+    document.body.insertAdjacentHTML("beforeend", "<div>Winner:" + winner + "</div>");
   });
   (async function(){
-    document.body.insertAdjacentHTML("beforeend", await SPromise(function(accept, reject){
-    // Don't ask me why synthetic promises are allowed to work with await. I myself am still
-    // confused, but hey: it works and SPromise even somehow shockingly makes them faster!
+    document.body.insertAdjacentHTML("beforeend", "<div>" + await SPromise(function(accept, reject){
+      // Don't ask me why synthetic promises are allowed to work with await. I myself am still
+      // confused, but hey: it works and SPromise even somehow shockingly makes them faster!
       setTimeout(function(){
         accept("Hello from await!")
       }, 750);
-    });
+    }) + "</div>");
   })();
 })();
 </script>
