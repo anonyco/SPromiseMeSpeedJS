@@ -1,5 +1,5 @@
 // The javascript promise library that promises you SPEED, and lots of it
-(function(){
+(typeof self === "undefined" ? this : self)["SPromise"] = (function(){
 	"use strict";
 	// the reason I use a variable like this is because closure compiler automatically inlines and optimizes it
 	///////////////////////
@@ -9,9 +9,8 @@
 	const proxy = function(func){func(this)};
 	const exec = function(x){x()};
 	const promiseBufferLvl = 256; // length of the promise buffer for double stack buffering
-	const Promise = window.Promise || Object.create(null);
-	const isPromise = SPromise["isPromise"] = function(x){
-		return !!x && (x.constructor === SPromise || x.constructor === Promise);//(x instanceof SPromise) || (x instanceof Promise);
+	const isPromise = SPromise["isPromise"] = function(x){ // determines whether something is able to be used as a promise
+		return !!x && typeof x["then"] === "function" && typeof x["catch"] === "function" && typeof x["finally"] === "function";
 	};
 	var promiseLevel = 0;
 	var isInsidePromise = false; // because javascript is single threaded, we can use this to determine if there is an outermost promise
@@ -299,5 +298,5 @@
 			});
 		});
 	}
-	window["SPromise"] = SPromise;
+	return SPromise;
 })();
