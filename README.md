@@ -299,5 +299,26 @@ The main difference between the two versions is that PromiseMeSpeedDEBUG is inte
 <script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/promiseMeSpeed.min.js?dl=0"></script>
 ```
 
+# PromiseMeSpeedAdvancedEnumerations.js
+
+For a separate project I am using PromiseMeSpeed in, the default ECMAScript specification for promises is just simply too slow for my purposes. Thus, I have revised the whole thing to use lickety-fast enumerations. However, for this script, do not ever do `<script src="PromiseMeSpeedAdvancedEnumerations.js"></script>` as that will make your code really slow. Also do not use distribute this script unminified or without the `DEBUGMODE` variable not set to `true` as that will make your code really slow too. The way to use this script is to insert it into the scope of your actual script and minify it along with the rest of your script to increase performance to the limit. An example usage of this script is as follows.
+
+```Javascript
+SPromise_all(
+    SPromise(function(accept, reject){
+        setTimeout(accept, 1000);
+    }),
+    SPromise(function(accept, reject){
+		setTimeout(accept, 500);
+    })
+)[ENUM_SPROMISE_THEN](function(){
+	console.log("success!")
+})[ENUM_SPROMISE_FINALLY](function(){
+	console.log("finally!")
+});
+```
+
+
+
 # Think Before You Pull!
 The purpose of PromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of PromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
