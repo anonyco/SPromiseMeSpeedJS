@@ -1,5 +1,5 @@
 # PromiseMeSpeed
-PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~9-12x faster than Chrome's native promises and ~2-9x faster than Bluebird's promises. The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then condider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
+PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~9-12x faster than Chrome's native promises and ~2-9x faster than Bluebird's promises. The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
 
 # Quick Start
 
