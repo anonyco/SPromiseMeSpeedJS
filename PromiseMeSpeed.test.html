@@ -86,7 +86,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 				}
 			}
 		}, 250); // arbitrary time of 250ms, after which we assume that all the promises are done
-	})();
+	}
 }).bind(0,
 window.Promise, // Bluebird overides window.Promise, so we must get window.Promise before Bluebird loads up
 [function(PromiseConstructor, expect, output){
