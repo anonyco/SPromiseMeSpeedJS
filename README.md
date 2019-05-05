@@ -318,7 +318,7 @@ SPromise_all(
 });
 ```
 
-# PromiseRejectionEvent
+<!--# PromiseRejectionEvent
 The current spec for Promises wants there to be a PromiseRejectionEvent. SPromise will asynchronously (via setTimeout) fire a PromiseRejectionEvent on the window object when there is a Promise that fails and has nothing to handle the failure. However, SPromise slightly deviates from this specification for the purposes of performance in so much that SPromise treats internal triggers from `Promise.all` and `Promise.race` same as ordinary handles. Thus, when a promise is rejected, but you called race/all on the promise, the promise wrongly never fires a PromiseRejectionEvent event. This is a known bug, but it will never be fixed because of the overhead involved in adding extra checks that verify whether a catch handler is internal or external. Further, any fix for this bug would only apply apply to SPromises: there would be no (reasonable/sane) way to patch calling native Promise.all on an array of SPromises that are about to be rejected. Observe.
 
 ```Javascript
@@ -330,7 +330,7 @@ SPromise.all(promiseToBeRejected)
     .catch(function(){}); // ensure that the rejection of SPromise.all is caught here
 
 rejectThePromise(); // should cause a PromiseRejectionEvent to be emitted, but no PromiseRejectionEvent ever happens
-```
+```-->
 
 # Think Before You Pull!
 The purpose of PromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of PromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
