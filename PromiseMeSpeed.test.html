@@ -25,7 +25,8 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 	function prettyStringify(array){ /// JSON.stringify mixed with pretty-printing
 		var result = '';
 		for (var i=0; i<array.length; i++) {
-			result += JSON_stringify(array[i], null, '\t') + "\n";
+			var val = array[i];
+			result += (typeof val=== "object" ? JSON_stringify(val, null, '\t') : val) + "\n";
 		}
 		return result.slice(0, -1);
 	}
