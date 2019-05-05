@@ -103,7 +103,13 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 </script>
 <style>
 	#testResults td, #testResults th {border: 1px solid}
-	.test-code-snippet {max-height: 7em; overflow-y: scroll; font-variant-ligatures: none}
+	.test-code-snippet {
+		height: 7em;
+		min-height: 100%;
+		margin: 0;
+		overflow-y:scroll;
+		font-variant-ligatures: none
+	}
 </style>
 </body>
 </html>
