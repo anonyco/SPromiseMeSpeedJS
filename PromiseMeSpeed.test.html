@@ -151,6 +151,18 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 	expect(); // expect nothing
 	PromiseConstructor.reject().finally(output);
 }, function(PromiseConstructor, expect, output){
+	// return value from .finally ignored for thenables
+	expect('.finally transparency');
+	PromiseConstructor.resolve('.finally transparency')
+		.finally(function(){return '.finally is blocking'})
+		.then(output);
+}, function(PromiseConstructor, expect, output){
+	// return value from .finally ignored for catchables
+	expect('.finally transparency');
+	PromiseConstructor.reject('.finally transparency')
+		.finally(function(){return '.finally is blocking'})
+		.catch(output);
+}, function(PromiseConstructor, expect, output){
 	// Promise{reject}.catch{throw}.then pipes the value
 	expect(
 		'[passing:] Promise{reject}.catch{throw}.catch pipe',
