@@ -50,7 +50,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 					bindArrayPrototypePush(results[testIndex] = [])
 				);
 			} catch(e) {
-				results[testIndex].push(e.stack);
+				e && results[testIndex].push(e.stack);
 			}
 			
 		}
