@@ -4,7 +4,7 @@
 <body>
 <center><h1>Compliance Tests for PromiseMeSpeed</h1></center>
 <pre id="scriptError" style="color:#c00"></pre>
-<table style="border-collapse:collapse"><thead>
+<table style="border-collapse:collapse;max-width:100%"><thead>
 	<tr><th>Vendor</th><th>Code Snippet</th><th>Expected Output</th><th>Actual Output</th></tr>
 </thead><tbody id="testResults"></tbody></table>
 <script src="PromiseMeSpeed.src.js" defer=""
@@ -13,7 +13,7 @@
 		onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script>
 <script>
 "use strict";
-// my own test manager
+// my own test manager with lots of Promise tests
 addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseTests){
 	var promisesAndVendors = [[window.SPromise, "SPromise"], [nativeBrowserPromise, "native"], [window.Promise, "Bluebird"]];
 	var testResultsTbody = document.getElementById("testResults");
@@ -91,14 +91,156 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 }).bind(0,
 window.Promise, // Bluebird overides window.Promise, so we must get window.Promise before Bluebird loads up
 [function(PromiseConstructor, expect, output){
-	// basic expectation that there is a ''
-	expect('"then" in promise', '"catch" in promise', '"finally" in promise');
+	// basic expectation for the three common methods
+	expect(
+		'"then" in promise', '"catch" in promise', '"finally" in promise',
+		'Promise.all', 'Promise.race', 'Promise.reject', 'Promise.resolve'
+	);
 	
 	var instance = new PromiseConstructor(function(){});
 	
-	if ("then" in instance) output('"then" in promise');
-	if ("catch" in instance) output('"catch" in promise');
-	if ("finally" in instance) output('"finally" in promise');
+	if (typeof instance.then === "function") output('"then" in promise');
+	if (typeof instance.catch === "function") output('"catch" in promise');
+	if (typeof instance.finally === "function") output('"finally" in promise');
+	
+	if (typeof PromiseConstructor.all === "function") output('Promise.all');
+	if (typeof PromiseConstructor.race === "function") output('Promise.race');
+	if (typeof PromiseConstructor.reject === "function") output('Promise.reject');
+	if (typeof PromiseConstructor.resolve === "function") output('Promise.resolve');
+}, function(PromiseConstructor, expect, output){
+	// Promise{accept}.then pipes the value
+	expect('Promise{accept}.then pipe');
+	new PromiseConstructor(function(accept){
+		accept('Promise{accept}.then pipe');
+	}).then(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise.resolve.then pipes the value
+	expect('Promise.resolve.then pipe');
+	PromiseConstructor.resolve('Promise.resolve.then pipe').then(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise{accept}.then.then pipes the value
+	expect('[passing:] Promise{accept}.then.then pipe', 'Promise{accept}.then.then pipe');
+	new PromiseConstructor(function(accept){
+		accept('Promise{accept}.then.then pipe');
+	}).then(function(value){
+		output('[passing:] ' + value);
+		return value;
+	}).then(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise{reject}.catch pipes the value
+	expect('Promise{reject}.catch pipe');
+	new PromiseConstructor(function(accept, reject){
+		reject('Promise{reject}.catch pipe');
+	}).catch(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise{throw}.catch pipes the value
+	expect('Promise{throw}.catch pipe');
+	new PromiseConstructor(function(accept, reject){
+		throw 'Promise{throw}.catch pipe';
+	}).catch(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise.reject.then pipes the value
+	expect('Promise.reject.then pipe');
+	PromiseConstructor.reject('Promise.reject.then pipe').then(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise.resolve.finally pipes no value
+	expect(); // expect nothing
+	PromiseConstructor.resolve().finally(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise.reject.finally pipes no value
+	expect(); // expect nothing
+	PromiseConstructor.reject().finally(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise{reject}.catch{throw}.then pipes the value
+	expect(
+		'[passing:] Promise{reject}.catch{throw}.catch pipe',
+		'Promise{reject}.catch{throw}.catch pipe'
+	);
+	new PromiseConstructor(function(accept, reject){
+		reject('Promise{accept}.then.then pipe');
+	}).catch(function(value){
+		output('[passing:] ' + value);
+		throw value;
+	}).catch(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise{throw}.catch.then piping
+	expect('thrown error msg', 'return from catch');
+	new PromiseConstructor(function(accept, reject){throw 'thrown error msg'})
+		.catch(function(value){output(value); return 'return from catch'})
+		.then(output)
+}, function(PromiseConstructor, expect, output){
+	// '.catch' transparency for .catch.catch.then
+	expect('Transparent resolved');
+	new PromiseConstructor(function(accept, reject){accept('Transparent resolved');})
+		.catch(function(){ output('1st ".catch" should transparently pass the resolved'); })
+		.catch(function(){ output('2nd ".catch" should transparently pass the resolved'); })
+		.then(output)
+}, function(PromiseConstructor, expect, output){
+	// '.resolve(Promise)' resolves to a Promise without resolving the Promise itself
+	expect('Promise.resolve(new promise) is a promise');
+	var promiseInput = new PromiseConstructor(function(accept){accept()});
+	PromiseConstructor.resolve(promiseInput).then(function(value) {
+		if (value === promiseInput)
+			output('Promise.resolve(new promise) is a promise');
+	});
+},  function(PromiseConstructor, expect, output){
+	// .finally{throw}.catch check
+	expect('.finally{throw}.catch');
+	PromiseConstructor.resolve().finally(function(resolve){
+		throw '.finally{throw}.catch';
+	}).catch(output);
+},  function(PromiseConstructor, expect, output){
+	// `throw` after `resolve` does nothing
+	expect('throw resolve() thenablity');
+	new PromiseConstructor(function(accept){
+		throw accept('throw resolve() thenablity');
+	}).then(output);
+}, function(PromiseConstructor, expect, output){
+	// Promise without new throws error
+	// SPromise should fail this test because it does not use `new`
+	expect('Exception when constructed without `new`');
+	try {
+		PromiseConstructor(function(accept){accept()});
+	} catch(e) {
+ 		output('Exception when constructed without `new`');
+ 	}
+}, function(PromiseConstructor, expect, output){
+	// stack overflow test to ensure that the promises can deal with deep nesting
+	expect('No stack overflow!');
+	var i = 16384;
+	new PromiseConstructor(function recurseDeeper(){
+		try {
+			if (i-- < 0) return output('No stack overflow!');
+			return new PromiseConstructor(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
+	// breadth test for many many functions called after a promise
+	expect('16384 successful ".then"s');
+	var promiseAcceptor;
+	var instance = new PromiseConstructor(function(accept){promiseAcceptor = accept});
+	function thenAfter(){}
+	for (var i=0; i<16384; i++) {
+		instance.then(thenAfter, thenAfter);
+		instance.catch(thenAfter);
+		instance.finally(thenAfter);
+	}
+	promiseAcceptor();
+	for (var i=0; i<16384; i++) {
+		instance.then(thenAfter, thenAfter);
+		instance.catch(thenAfter);
+		instance.finally(thenAfter);
+	}
+	output('16384 successful ".then"s');
+}, function(PromiseConstructor, expect, output){
+	// ensure that .toString returns [object Promise];
+	expect('promise.toString() === "[object Promise]"');
+	output('promise.toString() === ' + JSON_stringify(
+		"" + new PromiseConstructor(function(){})
+	));
 }]), {once: 1});
 </script>
 <style>
