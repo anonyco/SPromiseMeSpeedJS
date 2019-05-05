@@ -43,11 +43,15 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 		
 		for (var testIndex = 0; testIndex < allPromiseTests.length; testIndex++) {
 			// bind array.prototype.push to the two arrays, then the test will act on the arrays
-			allPromiseTests[testIndex](
-				promiseVendor[0],
-				bindArrayPrototypePush(expectations[testIndex] = []),
-				bindArrayPrototypePush(results[testIndex] = [])
-			);
+			try {
+				allPromiseTests[testIndex](
+					promiseVendor[0],
+					bindArrayPrototypePush(expectations[testIndex] = []),
+					bindArrayPrototypePush(results[testIndex] = [])
+				);
+			} catch(e) {
+				results[testIndex].push(e.stack);
+			}
 			
 		}
 		setTimeout(function(){
