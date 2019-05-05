@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head><title>PromiseMeSpeed Compliance Tests</title></head>
+<body>
+<center><h1>Compliance Tests for PromiseMeSpeed</h1></center>
+<pre id="scriptError" style="color:#c00"></pre>
+<table style="border-collapse:collapse"><thead>
+	<tr><th>Vendor</th><th>Code Snippet</th><th>Expected Output</th><th>Actual Output</th></tr>
+</thead><tbody id="testResults"></tbody></table>
+<script src="PromiseMeSpeed.src.js" defer=""
+		onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.4/bluebird.core.min.js" defer=""
+		onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script>
+<script>
+"use strict";
+// my own test manager
+addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseTests){
+	var promisesAndVendors = [[window.SPromise, "SPromise"], [nativeBrowserPromise, "native"], [window.Promise, "Bluebird"]];
+	var testResultsTbody = document.getElementById("testResults");
+	var lastFailedTestRow = null;
+	var JSON_stringify = JSON.stringify;
+	for (var promiseVendorIndex = 0; promiseVendorIndex < promisesAndVendors.length; promiseVendorIndex++) {
+		doTestsForVendor( promisesAndVendors[promiseVendorIndex] );
+	}
+	function prettyStringify(array){ /// JSON.stringify mixed with pretty-printing
+		var result = '';
+		for (var i=0; i<array.length; i++) {
+			result += JSON_stringify(array[i], null, '\t') + "\n";
+		}
+		return result.slice(0, -1);
+	}
+	function doTestsForVendor(promiseVendor){
+		var expectations = [];
+		var results = [];
+		
+		function bindArrayPrototypePush(expectationsOrResults){
+			return function(){
+				for (var i=0; i<arguments.length; i++)
+					expectationsOrResults.push(arguments[i]);
+			};
+		}
+		
+		for (var testIndex = 0; testIndex < allPromiseTests.length; testIndex++) {
+			// bind array.prototype.push to the two arrays, then the test will act on the arrays
+			allPromiseTests[testIndex](
+				promiseVendor[0],
+				bindArrayPrototypePush(expectations[testIndex] = []),
+				bindArrayPrototypePush(results[testIndex] = [])
+			);
+			
+		}
+		setTimeout(function(){
+			// now, check to see which arrays are the same and which differ to determine which test failed
+			for (var testIndex = 0; testIndex < allPromiseTests.length; testIndex++) {
+				var row = testResultsTbody.insertRow(-1);
+				var testExpected = expectations[testIndex];
+				var testResults = results[testIndex];
+				row.insertCell(-1).textContent = promiseVendor[1]; // promise vendor name
+				var codePreTag = row.insertCell(-1).appendChild(document.createElement("pre"));
+				codePreTag.className = 'test-code-snippet';
+				codePreTag.textContent = allPromiseTests[testIndex].toString(); // test code
+				row.insertCell(-1).appendChild(document.createElement("pre")).textContent = (
+					prettyStringify(testExpected, null, "\t")
+				); // expected results
+				var actualResultsCell = row.insertCell(-1);
+				actualResultsCell.appendChild(document.createElement("pre")).textContent = (
+					prettyStringify(testResults, null, "\t")
+				); // actual results
+				var areTheSameSuccess = true;
+				if (testExpected.length !== testResults.length) areTheSameSuccess = false;
+				if (areTheSameSuccess) {
+					// check for any results that fail to match what was expected
+					for (var resultIndex=0; resultIndex < testExpected.length; resultIndex++)
+						if (testExpected[resultIndex] !== testResults[resultIndex])
+							areTheSameSuccess = false;
+				}
+				// green => success; red => failure
+				actualResultsCell.style.background = areTheSameSuccess ? "#dfd" : "#fdd":
+				if (!areTheSameSuccess) {
+					// move it up higher to the end of the fail section
+				    testResultsTbody.insertBefore(
+						row,
+						lastFailedTestRow ? lastFailedTestRow.nextSibling : testResultsTbody.firstChild
+					);
+					lastFailedTestRow = row;
+				}
+			}
+		}, 250); // arbitrary time of 250ms, after which we assume that all the promises are done
+	})();
+}).bind(0,
+window.Promise, // Bluebird overides window.Promise, so we must get window.Promise before Bluebird loads up
+[function(PromiseConstructor, expect, output){
+	// basic expectation that there is a ''
+	expect('"then" in promise', '"catch" in promise', '"finally" in promise');
+	
+	var instance = new PromiseConstructor(function(){});
+	
+	if ("then" in instance) output('"then" in promise');
+	if ("catch" in instance) output('"catch" in promise');
+	if ("finally" in instance) output('"finally" in promise');
+}]), {once: 1});
+</script>
+<style>
+	#testResults td, #testResults th {border: 1px solid}
+	.test-code-snippet {max-height: 7em; overflow-y: scroll; font-variant-ligatures: none}
+</style>
+</body>
+</html>
