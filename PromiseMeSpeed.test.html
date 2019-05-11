@@ -50,7 +50,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 					bindArrayPrototypePush(results[testIndex] = [])
 				);
 			} catch(e) {
-				e && results[testIndex].push(e.stack);
+				e && results[testIndex].push(e.stack || e.message || e.toString());
 			}
 			
 		}
@@ -145,7 +145,7 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 }, function(PromiseConstructor, expect, output){
 	// Promise.reject.then pipes the value
 	expect('Promise.reject.then pipe');
-	PromiseConstructor.reject('Promise.reject.then pipe').then(output);
+	PromiseConstructor.reject('Promise.reject.then pipe').then(function(){}, output);
 }, function(PromiseConstructor, expect, output){
 	// Promise.resolve.finally pipes no value
 	expect(); // expect nothing
@@ -194,10 +194,12 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 }, function(PromiseConstructor, expect, output){
 	// '.resolve(Promise)' resolves to a Promise without resolving the Promise itself
 	expect('Promise.resolve(new promise) is a promise');
-	var promiseInput = new PromiseConstructor(function(accept){accept()});
+	var promiseInput = new PromiseConstructor(function(accept){accept("real inner resolve")});
 	PromiseConstructor.resolve(promiseInput).then(function(value) {
 		if (value === promiseInput)
 			output('Promise.resolve(new promise) is a promise');
+		else
+			output('Promise.resolve(new promise) is ' + JSON.stringify(value));
 	});
 },  function(PromiseConstructor, expect, output){
 	// .finally{throw}.catch check
@@ -230,7 +232,7 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 			return new PromiseConstructor(recurseDeeper);
 		} catch(e) {
 			i = 0;
-			output(e.message);
+			output(e.stack || e.message || e.toString());
 		}
 	});
 }, function(PromiseConstructor, expect, output){
@@ -252,10 +254,22 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 	}
 	output('16384 successful ".then"s');
 }, function(PromiseConstructor, expect, output){
-	// ensure that .toString returns [object Promise];
+	// ensure that .toString returns [object Promise] for new instances
 	expect('promise.toString() === "[object Promise]"');
-	output('promise.toString() === ' + JSON_stringify(
+	output('promise.toString() === ' + JSON.stringify(
 		"" + new PromiseConstructor(function(){})
+	));
+}, function(PromiseConstructor, expect, output){
+	// ensure that .toString returns [object Promise] for acceptions
+	expect('promise.toString() === "[object Promise]"');
+	output('promise.toString() === ' + JSON.stringify(
+		"" + PromiseConstructor.accept(null)
+	));
+}, function(PromiseConstructor, expect, output){
+	// ensure that .toString returns [object Promise] for rejections
+	expect('promise.toString() === "[object Promise]"');
+	output('promise.toString() === ' + JSON.stringify(
+		"" + PromiseConstructor.reject(null)
 	));
 }]), {once: 1});
 </script>
