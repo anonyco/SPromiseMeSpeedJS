@@ -245,10 +245,10 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 }, function(PromiseConstructor, expect, output){
 	// stack overflow test to ensure that the promises can deal with deep nesting
 	expect('No stack overflow inside of 4096 calls!');
-	var i = 4096;
+	var i = 1024;
 	new PromiseConstructor(function recurseDeeper(){
 		try {
-			if (i-- < 0) return output('No stack overflow inside of 4096 calls!');
+			if (i-- < 0) return output('No stack overflow inside of 1024 calls!');
 			return new PromiseConstructor(recurseDeeper);
 		} catch(e) {
 			i = 0;
