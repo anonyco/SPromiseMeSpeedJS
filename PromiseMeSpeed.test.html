@@ -342,8 +342,10 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 	#testResults td, #testResults th {border: 1px solid;vertical-align:top}
 	.test-code-snippet {
 		min-height: 7em;
+		height: 100%;
+		max-height: 100%;
 		margin: 0;
-		overflow-y:scroll;
+		overflow-y:auto;
 		font-variant-ligatures: none
 	}
 </style>
