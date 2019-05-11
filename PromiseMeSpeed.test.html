@@ -260,10 +260,10 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		"" + new PromiseConstructor(function(){})
 	));
 }, function(PromiseConstructor, expect, output){
-	// ensure that .toString returns [object Promise] for acceptions
+	// ensure that .toString returns [object Promise] for resolves
 	expect('promise.toString() === "[object Promise]"');
 	output('promise.toString() === ' + JSON.stringify(
-		"" + PromiseConstructor.accept(null)
+		"" + PromiseConstructor.resolve(null)
 	));
 }, function(PromiseConstructor, expect, output){
 	// ensure that .toString returns [object Promise] for rejections
