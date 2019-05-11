@@ -50,7 +50,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 					bindArrayPrototypePush(results[testIndex] = [])
 				);
 			} catch(e) {
-				e && results[testIndex].push(e.stack || e.message || e.toString());
+				e && results[testIndex].push(e.message + e.stack);
 			}
 			
 		}
@@ -173,7 +173,7 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		'Promise{reject}.catch{throw}.catch pipe'
 	);
 	new PromiseConstructor(function(accept, reject){
-		reject('Promise{accept}.then.then pipe');
+		reject('Promise{reject}.catch{throw}.catch pipe');
 	}).catch(function(value){
 		output('[passing:] ' + value);
 		throw value;
@@ -224,15 +224,15 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
  	}
 }, function(PromiseConstructor, expect, output){
 	// stack overflow test to ensure that the promises can deal with deep nesting
-	expect('No stack overflow!');
-	var i = 16384;
+	expect('No stack overflow inside of 4096 calls!');
+	var i = 4096;
 	new PromiseConstructor(function recurseDeeper(){
 		try {
-			if (i-- < 0) return output('No stack overflow!');
+			if (i-- < 0) return output('No stack overflow inside of 4096 calls!');
 			return new PromiseConstructor(recurseDeeper);
 		} catch(e) {
 			i = 0;
-			output(e.stack || e.message || e.toString());
+			output(e.message + e.stack);
 		}
 	});
 }, function(PromiseConstructor, expect, output){
