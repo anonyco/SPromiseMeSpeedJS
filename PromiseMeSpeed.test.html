@@ -192,16 +192,36 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		.catch(function(){ output('2nd ".catch" should transparently pass the resolved'); })
 		.then(output)
 }, function(PromiseConstructor, expect, output){
-	// '.resolve(Promise)' resolves to a Promise without resolving the Promise itself
-	expect('Promise.resolve(new promise) is a promise');
-	var promiseInput = new PromiseConstructor(function(accept){accept("real inner resolve")});
+	// '.resolve(Promise)' resolves to the resolution of the inner Promise
+	expect('Promise.resolve(new Promise) resolves to the resolution of the inner promise');
+	var promiseInput = new PromiseConstructor(function(accept, reject){
+		accept("the resolution of the inner promise");
+	});
 	PromiseConstructor.resolve(promiseInput).then(function(value) {
 		if (value === promiseInput)
 			output('Promise.resolve(new promise) is a promise');
 		else
-			output('Promise.resolve(new promise) is ' + JSON.stringify(value));
+			output('Promise.resolve(new promise) resolves to ' + value);
+	});
+}, function(PromiseConstructor, expect, output){
+	// '.reject(Promise)' rejects to the rejection of the inner Promise
+	expect('Promise.reject(new Promise) rejects to the rejection of the inner promise');
+	var promiseInput = new PromiseConstructor(function(accept, reject){
+		reject("the rejection of the inner promise");
+	});
+	PromiseConstructor.reject(promiseInput).catch(function(value) {
+		if (value === promiseInput)
+			output('Promise.reject(new promise) is a promise');
+		else
+			output('Promise.reject(new promise) rejects to ' + value);
 	});
 },  function(PromiseConstructor, expect, output){
+	// '.resolve(Promise{reject()})' taints the resolution of the Promise
+	expect('Promise.resolve(new Promise{reject()}) taints the resolution');
+	PromiseConstructor.resolve(new PromiseConstructor(function(accept, reject){
+		reject('Promise.resolve(new Promise{reject()}) taints the resolution');
+	})).catch(output);
+}, function(PromiseConstructor, expect, output){
 	// .finally{throw}.catch check
 	expect('.finally{throw}.catch');
 	PromiseConstructor.resolve().finally(function(resolve){
@@ -271,13 +291,40 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 	output('promise.toString() === ' + JSON.stringify(
 		"" + PromiseConstructor.reject(null)
 	));
+}, function(PromiseConstructor, expect, output){
+	// nested thenability and order test
+	expect('Checkpoint A: before inner .then');
+	expect('Checkpoint B: inside inner .then');
+	expect('Checkpoint C: after inner .then');
+	expect('Checkpoint D: after outer .then');
+	PromiseConstructor.resolve().then(function(){
+		output('Checkpoint A: before inner .then');
+		return new PromiseConstructor(function(accept, reject){
+			output('Checkpoint B: inside inner .then');
+			accept('Checkpoint D: after outer .then');
+			output('Checkpoint C: after inner .then');
+		});
+	}).then(output);
+}, function(PromiseConstructor, expect, output){
+	// nested catchability and order test
+	expect('Checkpoint A: before inner .catch');
+	expect('Checkpoint B: inside inner .catch');
+	expect('Checkpoint C: after inner .catch');
+	expect('Checkpoint D: after outer .catch');
+	PromiseConstructor.reject().catch(function(){
+		output('Checkpoint A: before inner .catch');
+		return new PromiseConstructor(function(accept, reject){
+			output('Checkpoint B: inside inner .catch');
+			reject('Checkpoint D: after outer .catch');
+			output('Checkpoint C: after inner .catch');
+		});
+	}).catch(output);
 }]), {once: 1});
 </script>
 <style>
-	#testResults td, #testResults th {border: 1px solid}
+	#testResults td, #testResults th {border: 1px solid;vertical-align:top}
 	.test-code-snippet {
-		height: 7em;
-		min-height: 100%;
+		min-height: 7em;
 		margin: 0;
 		overflow-y:scroll;
 		font-variant-ligatures: none
