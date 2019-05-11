@@ -50,7 +50,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 					bindArrayPrototypePush(results[testIndex] = [])
 				);
 			} catch(e) {
-				e && results[testIndex].push(e.message + e.stack);
+				e && results[testIndex].push(e.message + "\n" + e.stack);
 			}
 			
 		}
@@ -252,7 +252,7 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 			return new PromiseConstructor(recurseDeeper);
 		} catch(e) {
 			i = 0;
-			output(e.message + e.stack);
+			output(e.message + "\n" + e.stack);
 		}
 	});
 }, function(PromiseConstructor, expect, output){
@@ -265,7 +265,7 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 			return new PromiseConstructor(recurseDeeper);
 		} catch(e) {
 			i = 0;
-			output(e.message + e.stack);
+			output(e.message + "\n" + e.stack);
 		}
 	});
 }, function(PromiseConstructor, expect, output){
@@ -290,6 +290,93 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		output(num.catch + ' successful ".catch"s');
 		output(num.finally + ' successful ".finally"s');
 	}, 100);
+}, function(PromiseConstructor, expect, output){
+	// stack overflow test to ensure that the promises can deal with accept()->`.then` nesting
+	expect('No `.then` stack overflow inside of 2048 calls!');
+	var i = 2048;
+	PromiseConstructor.resolve(null).then(function recurseDeeper(){
+		try {
+			if (i-- < 0) return output('No `.then` stack overflow inside of 2048 calls!');
+			PromiseConstructor.resolve(null).then(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + "\n" + e.stack);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
+	// homologous `.catch` stack overflow test
+	expect('No homologous `.then` stack overflow inside of 2048 calls!');
+	var i = 2048, samePromise=PromiseConstructor.resolve(null);
+	samePromise.then(function recurseDeeper(){
+		try {
+			if (i-- < 0) {
+				output('No homologous `.then` stack overflow inside of 2048 calls!');
+				return;
+			}
+			samePromise.then(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + "\n" + e.stack);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
+	// stack overflow test to ensure that the promises can deal with reject()->`.catch` nesting
+	expect('No `.catch` stack overflow inside of 2048 calls!');
+	var i = 2048;
+	PromiseConstructor.reject(null).catch(function recurseDeeper(){
+		try {
+			if (i-- < 0) return output('No `.catch` stack overflow inside of 2048 calls!');
+			PromiseConstructor.reject(null).catch(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + "\n" + e.stack);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
+	// homologous `.catch` stack overflow test
+	expect('No homologous `.catch` stack overflow inside of 2048 calls!');
+	var i = 2048, samePromise=PromiseConstructor.reject(null);
+	samePromise.catch(function recurseDeeper(){
+		try {
+			if (i-- < 0) {
+				output('No homologous `.catch` stack overflow inside of 2048 calls!');
+				return;
+			}
+			samePromise.catch(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + "\n" + e.stack);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
+	// stack overflow test to ensure that the promises can deal with accept()->`.finally` nesting
+	expect('No `.finally` stack overflow inside of 2048 calls!');
+	var i = 2048;
+	PromiseConstructor.resolve(null).finally(function recurseDeeper(){
+		try {
+			if (i-- < 0) return output('No `.finally` stack overflow inside of 2048 calls!');
+			PromiseConstructor.resolve(null).finally(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + "\n" + e.stack);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
+	// homologous `.finally` stack overflow test
+	expect('No homologous `.finally` stack overflow inside of 2048 calls!');
+	var i = 2048, samePromise=PromiseConstructor.resolve(null);
+	samePromise.finally(function recurseDeeper(){
+		try {
+			if (i-- < 0) {
+				output('No homologous `.finally` stack overflow inside of 2048 calls!');
+				return;
+			}
+			samePromise.finally(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + "\n" + e.stack);
+		}
+	});
 }, function(PromiseConstructor, expect, output){
 	// ensure that .toString returns [object Promise] for new instances
 	expect('promise.toString() === "[object Promise]"');
