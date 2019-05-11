@@ -243,6 +243,19 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
  		output('Exception when constructed without `new`');
  	}
 }, function(PromiseConstructor, expect, output){
+	// stack overflow test to ensure that the promises can deal with deep nesting.
+	expect('No stack overflow inside of 16384 calls!');
+	var i = 16384;
+	new PromiseConstructor(function recurseDeeper(){
+		try {
+			if (i-- < 0) return output('No stack overflow inside of 16384 calls!');
+			return new PromiseConstructor(recurseDeeper);
+		} catch(e) {
+			i = 0;
+			output(e.message + e.stack);
+		}
+	});
+}, function(PromiseConstructor, expect, output){
 	// stack overflow test to ensure that the promises can deal with deep nesting
 	expect('No stack overflow inside of 2048 calls!');
 	var i = 2048;
@@ -258,21 +271,25 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 }, function(PromiseConstructor, expect, output){
 	// breadth test for many many functions called after a promise
 	expect('16384 successful ".then"s');
-	var promiseAcceptor;
-	var instance = new PromiseConstructor(function(accept){promiseAcceptor = accept});
-	function thenAfter(){}
-	for (var i=0; i<16384; i++) {
-		instance.then(thenAfter, thenAfter);
-		instance.catch(thenAfter);
+	expect('16384 successful ".catch"s');
+	expect('16384 successful ".finally"s');
+	var promiseRejector, num={then:0, catch:0, finally:0};
+	var instance = new PromiseConstructor(function(accept, reject){promiseRejector = reject});
+	function thenAfter(arg){num[arg||'finally']++; return 'then'}
+	for (var i=0; i<8192; i++) {
+		instance.catch(thenAfter).then(thenAfter);
 		instance.finally(thenAfter);
 	}
-	promiseAcceptor();
-	for (var i=0; i<16384; i++) {
-		instance.then(thenAfter, thenAfter);
-		instance.catch(thenAfter);
+	promiseRejector('catch');
+	for (var i=0; i<8192; i++) {
+		instance.catch(thenAfter).then(thenAfter);
 		instance.finally(thenAfter);
 	}
-	output('16384 successful ".then"s');
+	setTimeout(function(){
+		output(num.then + ' successful ".then"s');
+		output(num.catch + ' successful ".catch"s');
+		output(num.finally + ' successful ".finally"s');
+	}, 100);
 }, function(PromiseConstructor, expect, output){
 	// ensure that .toString returns [object Promise] for new instances
 	expect('promise.toString() === "[object Promise]"');
