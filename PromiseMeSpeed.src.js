@@ -191,6 +191,10 @@
 		function acceptP(x){
 			// This specific order should allow for max GZip compression
 			if (stage === 0) {
+				if (isPromise(x)) {
+					x.then(acceptP, rejectP); // wait for further commitment to resolve
+					return;
+				}
 				retVal = x;
 				stage = 2;
 				if (thenFuncs !== null)	{
@@ -408,6 +412,10 @@
 			func(function(x){ // acceptP
 				// This specific order should allow for max GZip compression
 				if (stage === 0) {
+					if (isPromise(x)) {
+						x.then(acceptP, rejectP); // wait for further commitment to resolve
+						return;
+					}
 					retVal = x;
 					stage = 2;
 					if (thenFuncs !== null)	{
@@ -433,6 +441,11 @@
 		return retObj;
 	}
 	function resolve(val){
+		if (isPromise(val)) {
+			return _NOCHECK_SPromise(function(accept, reject) {
+				val.then(accept, reject);
+			});
+		}
 		var curObj = {
 			"then": function(f){
 				// synchonously defered stacking allows for super performance
@@ -505,6 +518,11 @@
 		return curObj;
 	};
 	function _NOCHECK_resolve(val){
+		if (isPromise(val)) {
+			return _NOCHECK_SPromise(function(accept, reject) {
+				val.then(accept, reject);
+			});
+		}
 		// Only perform the check half the time. It greatly boosts performance because most times very few promise levels are used.
 		var curObj = {
 			"then": function(f){
