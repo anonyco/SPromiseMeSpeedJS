@@ -193,7 +193,8 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		.then(output)
 }, function(PromiseConstructor, expect, output){
 	// '.resolve(Promise)' resolves to the resolution of the inner Promise
-	expect('Promise.resolve(new Promise) resolves to the resolution of the inner promise');
+	expect('Promise.resolve(new Promise) resolves to\n' +
+	       '\tthe resolution of the inner promise');
 	var promiseInput = new PromiseConstructor(function(accept, reject){
 		accept("the resolution of the inner promise");
 	});
@@ -201,7 +202,7 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		if (value === promiseInput)
 			output('Promise.resolve(new Promise) is a promise');
 		else
-			output('Promise.resolve(new Promise) resolves to ' + value);
+			output('Promise.resolve(new Promise) resolves to\n\t' + value);
 	});
 }, function(PromiseConstructor, expect, output){
 	// '.reject(Promise)' rejects the inner Promise itself
@@ -433,7 +434,8 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		max-height: 100%;
 		margin: 0;
 		overflow-y:auto;
-		font-variant-ligatures: none
+		font-variant-ligatures: none;
+		max-width: 30vw;
 	}
 </style>
 </body>
