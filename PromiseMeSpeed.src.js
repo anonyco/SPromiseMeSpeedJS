@@ -1,3 +1,8 @@
+// ==ClosureCompiler==
+// @compilation_level ADVANCED_OPTIMIZATIONS
+// @language_out ECMASCRIPT_NEXT
+// ==/ClosureCompiler==
+
 // The javascript promise library that promises you SPEED, and lots of it
 (function(window){
 	"use strict";
