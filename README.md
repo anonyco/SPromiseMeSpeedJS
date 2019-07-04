@@ -1,5 +1,5 @@
 # PromiseMeSpeed
-PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~9-12x faster than Chrome's native promises and ~2-9x faster than Bluebird's promises. The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
+PromiseMeSpeed is currently the fastest javascript library, *promising* speedy ES6 promises that are ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
 
 # Quick Start
 
@@ -126,29 +126,29 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("BluebirdR3: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR4: ", function(x){return new bbPromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
+	window.Promise = nativePromise;
 	var SPromise = window.SPromise;
 	await test("SPromiseR1: ", function(x){return SPromise(x)});
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
 	await test("SPromiseR4: ", function(x){return SPromise(x)});
-	window.Promise = nativePromise;
 	console.log(resStr);
 })();
 ```
 Console output (lower numbers = lower promise delay = better):
 ```
-NativeR1:   0.20504807692307517ms
-NativeR2:   0.2591346153846574ms
-NativeR3:   0.15860576923077693ms
-NativeR4:   0.20966346153842935ms
-BluebirdR1: 0.34370192307694825ms
-BluebirdR2: 0.27802884615383705ms
-BluebirdR3: 0.289326923076907ms
-BluebirdR4: 0.2948076923076909ms
-SPromiseR1: 0.031778846153848954ms
-SPromiseR2: 0.05201923076922937ms
-SPromiseR3: 0.01673076923074964ms
-SPromiseR4: 0.030432692307683213ms
+NativeR1:   0.020721153794931106ms
+NativeR2:   0.020528846317364905ms
+NativeR3:   0.020913460712808255ms
+NativeR4:   0.021442306975726612ms
+BluebirdR1: 0.19572115259227127ms
+BluebirdR2: 0.18168269329740164ms
+BluebirdR3: 0.18274038470386025ms
+BluebirdR4: 0.1832211536776203ms
+SPromiseR1: 0.003413460105478477ms
+SPromiseR2: 0.003894230758305639ms
+SPromiseR3: 0.003317308325607043ms
+SPromiseR4: 0.0036057692621118175ms
 ```
 
 ### Synchronous Hellhole of Death Promising
@@ -169,20 +169,30 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 					acc();
                     return;
                 }
-                var k = performance.now(), i = 0, Len = 32768;
+                var i = 0, k = performance.now();
                 (function test(v){
                     f(function(k){
-                        k(v+(v*13%11));
+                        k(v+(((v<<5)%11)|0)|0);
                     }).then(function(v){
-                        if (i++ < Len) {
-                            test(v%7);
+						i = i + 1|0;
+                        if (i < 131072) {
+                            test(v%7|0);
                         } else {
-                            tmp += v;
-                            tests.push((performance.now() - k)/Len);
+							tests.push((performance.now() - k)/131072);
+                            tmp = tmp + v|0;
+							clearInterval(intervalID);
+							requestIdleCallback(theeFunc);
                         }
                     });
                 })(Math.random()*40|0);
-                requestIdleCallback(theeFunc);
+                var last = 0;
+                var intervalID = setInterval(function(){
+					if (last !== i) {last = i; return}
+					i = 131072;
+					clearInterval(intervalID);
+					tests.push((performance.now() - k)/i);
+					requestIdleCallback(theeFunc);
+                }, 10);
             });
         });
     }
@@ -199,30 +209,32 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("BluebirdR3: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR4: ", function(x){return new bbPromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
+	window.Promise = nativePromise;
 	var SPromise = window.SPromise;
 	await test("SPromiseR1: ", function(x){return SPromise(x)});
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
 	await test("SPromiseR4: ", function(x){return SPromise(x)});
-	window.Promise = nativePromise;
 	console.log(resStr);
 })();
 ```
 Console output (lower numbers = lower promise delay = better):
 ```
-NativeR1:   0.08879110717773404ms
-NativeR2:   0.09138412475585973ms
-NativeR3:   0.09104553222656211ms
-NativeR4:   0.09136700439453165ms
-BluebirdR1: 0.0021338195800783668ms
-BluebirdR2: 0.001447601318359837ms
-BluebirdR3: 0.0014637451171877203ms
-BluebirdR4: 0.001489685058594148ms
-SPromiseR1: 0.0010407409667971379ms
-SPromiseR2: 0.0008829040527349008ms
-SPromiseR3: 0.0009582824707029758ms
-SPromiseR4: 0.0009214782714849435ms
+NativeR1:   0.005851722717231667ms
+NativeR2:   0.0057087326050364595ms
+NativeR3:   0.005649124145534756ms
+NativeR4:   0.005644660949588598ms
+BluebirdR1: 0.0004493026733776162ms
+BluebirdR2: 0.00038002014157711983ms
+BluebirdR3: 0.0003836669923096281ms
+BluebirdR4: 0.00038921356200205537ms
+SPromiseR1: 0.00028054809568800465ms
+SPromiseR2: 0.00018094635017007477ms
+SPromiseR3: 0.0001728134156664396ms
+SPromiseR4: 0.00017861175534150675ms
 ```
+
+This test confounds me very much. I stepped through the code with DevTools and discovered an appreeciably larger overhead with Bluebird
 
 ### Await Promising
 Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
@@ -230,32 +242,33 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 (async function(){
 	"use strict";
 	var resStr="";
-	var nativePromise = window.Promise;
+	var nativePromise = window.Promise, performance = window.performance;
 	function test(str, f){
 		return new nativePromise(function(acc){
-            var tests=[], tmp=0, SPromise = window.SPromise;
-            var cycleCount=33, intV=requestIdleCallback(function theeFunc(){
+            var tests=[], tmp=0, SPromise = window.SPromise, idleOptions = {timeout: 10};
+            var cycleCount=11, intV=requestIdleCallback(function theeFunc(){
                 "use strict";
                 if (--cycleCount < 0) {
                     var res = tests.reduce((a, b) => a + b) / tests.length;
                     resStr += "\n" + str + res + "ms";
-					          acc();
+					acc();
                     return;
                 }
-                var k = performance.now(), i = 0, Len = 64;
+                var k = performance.now(), i = 0;
                 (async function test(v){
                     var v = await f(function(k){
-                        k(v+(v*13%11));
+                        k(v+((v<<4)%11|0)|0);
                     });
-                    if (i++ < Len) {
-                        test(v%7);
+					i = i + 1|0;
+                    if (i < 1536) {
+                        test(v%7|0);
                     } else {
                         tmp += v;
-                        tests.push((performance.now() - k)/Len);
-                		requestIdleCallback(theeFunc);
+                        tests.push((performance.now() - k)/1536);
+                		requestIdleCallback(theeFunc, idleOptions);
                     }
                 })(Math.random()*40|0);
-            });
+            }, idleOptions);
         });
     }
 
@@ -269,25 +282,25 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("BluebirdR2: ", function(x){return new bbPromise(x)});
 	await test("BluebirdR3: ", function(x){return new bbPromise(x)});
 	await (new nativePromise(_=>requestIdleCallback(_))); // to allow the CPU to take a break
+	window.Promise = nativePromise;
 	var SPromise = window.SPromise;
 	await test("SPromiseR1: ", function(x){return SPromise(x)});
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
-	window.Promise = nativePromise;
 	console.log(resStr);
 })();
 ```
 Console output (lower numbers = lower promise delay = better):
 ```
-NativeR1:   0.19717092803028374ms
-NativeR2:   0.21796875000000276ms
-NativeR3:   0.2995241477272595ms
-BluebirdR1: 5.19542140151517ms
-BluebirdR2: 5.168622159090939ms
-BluebirdR3: 5.096112689393976ms
-SPromiseR1: 0.2274715909090832ms
-SPromiseR2: 0.18396306818184519ms
-SPromiseR3: 0.1810298295454507ms
+NativeR1:   0.0076624644924033255ms
+NativeR2:   0.008196910509165415ms
+NativeR3:   0.007414772725992819ms
+BluebirdR1: 4.20462298769287ms
+BluebirdR2: 4.193633996216952ms
+BluebirdR3: 4.19275479402765ms
+SPromiseR1: 0.009224668567433335ms
+SPromiseR2: 0.007667199339046033ms
+SPromiseR3: 0.007688210237602383ms
 ```
 [Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
 
