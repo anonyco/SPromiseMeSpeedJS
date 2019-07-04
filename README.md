@@ -234,8 +234,6 @@ SPromiseR3: 0.0001728134156664396ms
 SPromiseR4: 0.00017861175534150675ms
 ```
 
-This test confounds me very much. I stepped through the code with DevTools and discovered an appreeciably larger overhead with Bluebird
-
 ### Await Promising
 Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
 ```Javascript
