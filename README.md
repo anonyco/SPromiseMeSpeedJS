@@ -5,7 +5,7 @@ PromiseMeSpeed is currently the fastest javascript library, *promising* speedy E
 
 To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts that use PromiseMeSpeed.
 ```HTML
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0"></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/spromiseMeSpeedDEBUG.min.js?dl=0"></script>
 ```
 Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call evil `document.write` inside your script.<br /><br />
 *Before:*
