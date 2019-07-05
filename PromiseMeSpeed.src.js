@@ -21,6 +21,8 @@
 	var isInsidePromise = false; // because javascript is single threaded, we can use this to determine if there is an outermost promise
 	var pStackLength = 0;		 // the current size of the persuadoStack
 	var _Symbol_toStringTag = typeof Symbol !== "undefined" && Symbol.toStringTag;
+	var symbolicToStringTagExists = typeof _Symbol_toStringTag === "symbol";
+	var undefinedResolve = resolve();
 
 	function resolvePends(){
 		if (pStackLength) {
@@ -31,70 +33,54 @@
 		}
 		isInsidePromise = false;
 	}
+	
+	function finallyBasicHandler(curObj) {
+		return function(f) {
+			try {
+				typeof f === "function" && f();
+			} catch(e) {
+				return _NOCHECK_reject(e);
+			}
+			return curObj;
+		};
+	}
 
 	function SPromise(func){
 		// simple/super/speedy/synchronous promise
 		var retVal, stage=0, thenFuncs = null, catchFuncs = null, finallies = null,  retObj = {
 			"then": function(tFunc, cFunc){
 				if (DEBUGMODE){
-					if (tFunc && typeof tFunc !== "function"){
-						console.error(Object.prototype.toString.call(tFunc) + " is not a valid function to be called after a successful promise");
+					if (tFunc != undefined && typeof tFunc !== "function"){
+						console.warn(Object.prototype.toString.call(tFunc) + " is not a valid function to be called after a successful promise");
 					}
-					if (cFunc && typeof cFunc !== "function"){
-						console.error(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
+					if (cFunc != undefined && typeof cFunc !== "function"){
+						console.warn(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
 					}
 				}
-
-				/*return _NOCHECK_SPromise(function(accept, reject){
-					if (stage === 0){
-						if (typeof tFunc === "function"){
-							if (thenFuncs !== null) {
-								if (typeof thenFuncs === "function") {
-									thenFuncs = [ thenFuncs, function(){accept(tFunc(retVal));} ];
-								} else {
-									thenFuncs.push(function(){accept(tFunc(retVal));});
-								}
-							} else thenFuncs = function(){accept(tFunc(retVal));};
-						}
-						if (typeof cFunc === "function") {
-							if (catchFuncs !== null) {
-								if (typeof catchFuncs === "function") {
-									catchFuncs = [ catchFuncs, function(){accept(cFunc(retVal));} ];
-								} else {
-									catchFuncs.push(function(){accept(cFunc(retVal));});
-								}
-							} else catchFuncs = function(){accept(cFunc(retVal));};
-						}
-					} else if (stage === 2) {
-						if (tFunc) accept( tFunc(retVal) );
-					} else { // if (stage === 1)
-						if (cFunc) reject( cFunc(retVal) );
-					}
-				});*/
 				if (stage === 0){
 					// promise has not yet completed...
 					return _NOCHECK_SPromise(function(accept, reject){
-						if (typeof tFunc === "function"){
-							if (thenFuncs !== null) {
-								if (typeof thenFuncs === "function") {
-									thenFuncs = [ thenFuncs, function(){accept(tFunc(retVal));} ];
-								} else {
-									thenFuncs.push(function(){accept(tFunc(retVal));});
-								}
-							} else thenFuncs = function(){accept(tFunc(retVal));};
-						}
-						if (typeof cFunc === "function") {
-							if (catchFuncs !== null) {
-								if (typeof catchFuncs === "function") {
-									catchFuncs = [ catchFuncs, function(){accept(cFunc(retVal));} ];
-								} else {
-									catchFuncs.push(function(){accept(cFunc(retVal));});
-								}
-							} else catchFuncs = function(){accept(cFunc(retVal));};
-						}
+						var finalAcceptor = typeof tFunc === "function" ? function(){accept(tFunc(retVal))} : accept;
+						var finalRejector = typeof cFunc === "function" ? function(){reject(cFunc(retVal))} : reject;
+						
+						if (thenFuncs !== null) {
+							if (typeof thenFuncs === "function") {
+								thenFuncs = [ thenFuncs, finalAcceptor ];
+							} else {
+								thenFuncs.push(finalAcceptor);
+							}
+						} else thenFuncs = finalAcceptor;
+						
+						if (catchFuncs !== null) {
+							if (typeof catchFuncs === "function") {
+								catchFuncs = [ catchFuncs, finalRejector ];
+							} else {
+								catchFuncs.push(finalRejector);
+							}
+						} else catchFuncs = finalRejector;
 					});
 				} else try {
-					var maybeInnerPromise = null;
+					/*var maybeInnerPromise = null;
 					if (stage === 2) {
 						if (typeof tFunc === "function") {
 							maybeInnerPromise = tFunc(retVal);
@@ -104,39 +90,20 @@
 							maybeInnerPromise = _NOCHECK_reject( cFunc(retVal) );
 						}
 					}
-					return isPromise(maybeInnerPromise) ? maybeInnerPromise : _NOCHECK_resolve(maybeInnerPromise);
+					return isPromise(maybeInnerPromise) ? maybeInnerPromise : _NOCHECK_resolve(maybeInnerPromise);*/
+					return stage === 2 ? (
+						typeof tFunc === "function" ? _NOCHECK_resolve( tFunc(retVal) ) : undefinedResolve
+					) : (
+						typeof cFunc === "function" ? _NOCHECK_reject( cFunc(retVal) ) : undefinedResolve
+					);
 				} catch(e) {return _NOCHECK_reject(e);}
 			},
 			"catch": function(cFunc){
 				if (DEBUGMODE){
-					if (cFunc && typeof cFunc !== "function"){
-						console.error(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
+					if (cFunc != undefined && typeof cFunc !== "function"){
+						console.warn(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
 					}
 				}
-				/*if (cFunc) {
-					if (catchFuncs !== null) catchFuncs.push(cFunc); else catchFuncs = [ cFunc ];
-				}*/
-
-				/*return _NOCHECK_SPromise(function(accept){
-					if (stage === 0){
-						if (catchFuncs !== null) {
-							if (typeof catchFuncs === "function") {
-								catchFuncs = [ catchFuncs, function(){accept(cFunc(retVal));} ];
-							} else {
-								catchFuncs.push(function(){accept(cFunc(retVal));});
-							}
-						} else catchFuncs = function(){accept(cFunc(retVal));};
-						if (thenFuncs !== null) {
-							if (typeof thenFuncs === "function") {
-								thenFuncs = [ thenFuncs, accept ];
-							} else {
-								thenFuncs.push(accept);
-							}
-						} else thenFuncs = accept;
-					} else {
-						accept( stage === 2 ? retVal : cFunc( retVal ) );
-					}
-				});*/
 				if (stage === 0){
 					// promise has not yet completed...
 					return _NOCHECK_SPromise(function(accept){
@@ -153,14 +120,13 @@
 							} else {
 								thenFuncs.push(accept);
 							}
-						} else thenFuncs = accept
+						} else thenFuncs = accept;
 					});
 				} else if (stage === 2) { // if success, then merely propagate the response transparently
 					return _NOCHECK_resolve(retVal);
 				} else {
 					try {
-						var maybeInnerPromise = cFunc( retVal )
-						return isPromise(maybeInnerPromise) ? maybeInnerPromise : _NOCHECK_resolve( maybeInnerPromise );
+						return typeof cFunc === "function" ? _NOCHECK_resolve( cFunc(retVal) ) : undefinedResolve;
 					} catch(e) {
 						return _NOCHECK_reject(e);
 					}
@@ -168,8 +134,8 @@
 			},
 			"finally": function(fFunc){
 				if (DEBUGMODE){
-					if (typeof fFunc !== "function"){
-						console.error(Object.prototype.toString.call(fFunc) + " is not a valid function to be called 'finally' after promise");
+					if (fFunc != undefined && typeof fFunc !== "function"){
+						console.warn(Object.prototype.toString.call(fFunc) + " is not a valid function to be called 'finally' after promise");
 					}
 				}
 				if (stage === 0) {
@@ -188,7 +154,7 @@
 				return retObj;
 			}
 		};
-		if (_Symbol_toStringTag !== false) retObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		if (symbolicToStringTagExists === true) retObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
 		// stage undefined = unfulfilled
 		// stage true = accepted
 		// stage false = rejected
@@ -197,27 +163,27 @@
 			// This specific order should allow for max GZip compression
 			if (stage === 0) {
 				if (isPromise(x)) {
-					x.then(acceptP, rejectP); // wait for further commitment to resolve
-					return;
-				}
-				retVal = x;
-				stage = 2;
-				if (thenFuncs !== null)	{
-					if (typeof thenFuncs === "function") {
-						thenFuncs(x);
-					} else {
-						thenFuncs.forEach(proxy, x);
+					x.then(acceptP, rejectP); // wait for further commitment before resolving. [FYI: this take a non-compliant shortcut]
+				} else {
+					retVal = x;
+					stage = 2;
+					if (thenFuncs !== null)	{
+						if (typeof thenFuncs === "function") {
+							thenFuncs(x);
+						} else {
+							thenFuncs.forEach(proxy, x);
+						}
+						thenFuncs  = null;
 					}
-					thenFuncs  = null;
-				}
-				catchFuncs = null;
-				if (finallies !== null)	{
-					if (typeof finallies === "function") {
-						finallies();
-					} else {
-						finallies.forEach(exec);
+					catchFuncs = null;
+					if (finallies !== null)	{
+						if (typeof finallies === "function") {
+							finallies();
+						} else {
+							finallies.forEach(exec);
+						}
+						finallies  = null;
 					}
-					finallies  = null;
 				}
 			}
 		}
@@ -245,7 +211,7 @@
 			}
 		}
 		// synchonously defered stacking allows for super performance
-		if (isInsidePromise) {
+		if (isInsidePromise === true) {
 			persuadoStack.push(
 				function(){
 					try {
@@ -258,8 +224,7 @@
 			pStackLength = pStackLength + 1|0;//+= 3;
 		} else {
 			promiseLevel = promiseLevel + 1|0;
-			if (promiseLevel === promiseBufferLvl){
-				isInsidePromise = true;
+			if (isInsidePromise = promiseLevel === promiseBufferLvl){
 				try {
 					func(acceptP, rejectP);
 				} catch(e) {
@@ -271,7 +236,7 @@
 				} catch(e) {
 					rejectP(e);
 				}
-				if (isInsidePromise && promiseLevel === 1) { // if this is the outermost promise
+				if (isInsidePromise === true && promiseLevel === 1) { // if this is the outermost promise
 					resolvePends();
 				}
 			}
@@ -295,37 +260,31 @@
 				if (stage === 0){
 					// promise has not yet completed...
 					return SPromise(function(accept, reject){
-						if (typeof tFunc === "function"){
-							if (thenFuncs !== null) {
-								if (typeof thenFuncs === "function") {
-									thenFuncs = [ thenFuncs, function(){accept(tFunc(retVal));} ];
-								} else {
-									thenFuncs.push(function(){accept(tFunc(retVal));});
-								}
-							} else thenFuncs = function(){accept(tFunc(retVal));};
-						}
-						if (typeof cFunc === "function") {
-							if (catchFuncs !== null) {
-								if (typeof catchFuncs === "function") {
-									catchFuncs = [ catchFuncs, function(){accept(cFunc(retVal));} ];
-								} else {
-									catchFuncs.push(function(){accept(cFunc(retVal));});
-								}
-							} else catchFuncs = function(){accept(cFunc(retVal));};
-						}
+						var finalAcceptor = typeof tFunc === "function" ? function(){accept(tFunc(retVal))} : accept;
+						var finalRejector = typeof cFunc === "function" ? function(){reject(cFunc(retVal))} : reject;
+						
+						if (thenFuncs !== null) {
+							if (typeof thenFuncs === "function") {
+								thenFuncs = [ thenFuncs, finalAcceptor ];
+							} else {
+								thenFuncs.push(finalAcceptor);
+							}
+						} else thenFuncs = finalAcceptor;
+						
+						if (catchFuncs !== null) {
+							if (typeof catchFuncs === "function") {
+								catchFuncs = [ catchFuncs, finalRejector ];
+							} else {
+								catchFuncs.push(finalRejector);
+							}
+						} else catchFuncs = finalRejector;
 					});
 				} else try {
-					var maybeInnerPromise = null;
-					if (stage === 2) {
-						if (typeof tFunc === "function") {
-							maybeInnerPromise = tFunc(retVal);
-						}
-					} else { // if (stage === 1)
-						if (typeof cFunc === "function") {
-							maybeInnerPromise = _NOCHECK_reject( cFunc(retVal) );
-						}
-					}
-					return isPromise(maybeInnerPromise) ? maybeInnerPromise : resolve(maybeInnerPromise);
+					return stage === 2 ? (
+						typeof tFunc === "function" ? resolve( tFunc(retVal) ) : undefinedResolve
+					) : (
+						typeof cFunc === "function" ? _NOCHECK_reject( cFunc(retVal) ) : undefinedResolve
+					);
 				} catch(e) {return _NOCHECK_reject(e);}
 			},
 			"catch": function(cFunc){
@@ -354,13 +313,12 @@
 							} else {
 								thenFuncs.push(accept);
 							}
-						} else thenFuncs = accept
+						} else thenFuncs = accept;
 					});
 				} else if (stage === 2) { // if success, then merely propagate the response transparently
 					return resolve(retVal);
 				} else try {
-					var maybeInnerPromise = cFunc( retVal )
-					return isPromise(maybeInnerPromise) ? maybeInnerPromise : resolve( maybeInnerPromise );
+					return typeof cFunc === "function" ? resolve( cFunc(retVal) ) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
@@ -382,10 +340,10 @@
 				} else {
 					fFunc();
 				}
-				return retObj;
+				return retObj; // transparently propagate events
 			}
 		};
-		if (_Symbol_toStringTag !== false) retObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		if (symbolicToStringTagExists === true) retObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
 		// stage undefined = unfulfilled
 		// stage true = accepted
 		// stage false = rejected
@@ -414,31 +372,31 @@
 			}
 		}
 		try {
-			func(function(x){ // acceptP
+			func(function acceptP(x){
 				// This specific order should allow for max GZip compression
 				if (stage === 0) {
 					if (isPromise(x)) {
 						x.then(acceptP, rejectP); // wait for further commitment to resolve
-						return;
-					}
-					retVal = x;
-					stage = 2;
-					if (thenFuncs !== null)	{
-						if (typeof thenFuncs === "function") {
-							thenFuncs(x);
-						} else {
-							thenFuncs.forEach(proxy, x);
+					} else {
+						retVal = x;
+						stage = 2;
+						if (thenFuncs !== null)	{
+							if (typeof thenFuncs === "function") {
+								thenFuncs(x);
+							} else {
+								thenFuncs.forEach(proxy, x);
+							}
+							thenFuncs  = null;
 						}
-						thenFuncs  = null;
-					}
-					catchFuncs = null;
-					if (finallies !== null)	{
-						if (typeof finallies === "function") {
-							finallies();
-						} else {
-							finallies.forEach(exec);
+						if (finallies !== null)	{
+							if (typeof finallies === "function") {
+								finallies();
+							} else {
+								finallies.forEach(exec);
+							}
+							finallies  = null;
 						}
-						finallies  = null;
+						catchFuncs = null;
 					}
 				}
 			}, rejectP);
@@ -446,25 +404,28 @@
 		return retObj;
 	}
 	function resolve(val){
-		if (isPromise(val)) {
-			return _NOCHECK_SPromise(function(accept, reject) {
+		//if (isPromise(val)) {
+		if (typeof val === "object" && val !== null && typeof val["then"] === "function") { // this is such a hot function that I decided to inline the call to isPromise
+			return val/*_NOCHECK_SPromise(function(accept, reject) {
 				val.then(accept, reject);
-			});
+			})*/;
 		}
 		var curObj = {
 			"then": function(f){
 				// synchonously defered stacking allows for super performance
-				if (isInsidePromise) {
-					return _NOCHECK_SPromise(function(accept, reject){
+				if (typeof f !== "function") return curObj;
+				if (isInsidePromise === true) {
+					return _NOCHECK_SPromise(function(accept){
 						persuadoStack.push(
 							function(){
 								try {
-									var maybePromise = f(val);
+									/*var maybePromise = f(val);
 									if (isPromise(maybePromise)) {
-										maybePromise.then(accept, reject);
+										maybePromise.then(accept);
 									} else {
 										accept(maybePromise);
-									}
+									}*/
+									accept( f(val) );
 								} catch(e) {
 									reject(e);
 								}
@@ -476,114 +437,98 @@
 					promiseLevel = promiseLevel + 1|0;
 					var newVal = null;
 					try {
-						if (promiseLevel === promiseBufferLvl){
-							isInsidePromise = true;
-							newVal = f(val);
+						if (isInsidePromise = promiseLevel === promiseBufferLvl){
+							persuadoStack.push(function(){ f(val) });
 						} else {
 							newVal = f(val);
-							if (isInsidePromise && promiseLevel === 1) { // if this is the outermost promise
+							if (isInsidePromise === true && promiseLevel === 1) { // if this is the outermost promise
 								resolvePends();
 							}
 						}
 					} catch(e) {
 						return _NOCHECK_reject(e);
-					} finally {promiseLevel = promiseLevel - 1|0}
-					return isPromise(newVal) ? newVal : _NOCHECK_resolve(newVal);
+					} finally {promiseLevel = promiseLevel - 1|0;}
+					return _NOCHECK_resolve(newVal);
 				}
 			},
-			"catch": function(){return curObj},
+			"catch": function(){return curObj;},
 			"finally": function(f){
 				// synchonously defered stacking allows for super performance
-				if (isInsidePromise) {
-					persuadoStack.push(
-						f//, null, null 
-					);
-					pStackLength = pStackLength + 1|0;//+= 3;
-				} else {
-					promiseLevel = promiseLevel + 1|0;
-					try {
-						if (promiseLevel === promiseBufferLvl){
-							isInsidePromise = true;
-							f();
-							isInsidePromise = false;
-						} else {
-							f();
-							if (isInsidePromise && promiseLevel === 1) { // if this is the outermost promise
-								resolvePends();
+				if (typeof f === "function") {
+					if (isInsidePromise === true) {
+						persuadoStack.push(
+							f//, null, null 
+						);
+						pStackLength = pStackLength + 1|0;
+					} else {
+						promiseLevel = promiseLevel + 1|0;
+						try {
+							if (isInsidePromise = promiseLevel === promiseBufferLvl){
+								f();
+								isInsidePromise = false;
+							} else {
+								f();
+								if (isInsidePromise === true && promiseLevel === 1) { // if this is the outermost promise
+									resolvePends();
+								}
 							}
-						}
-					} catch(e) {
-						return _NOCHECK_reject(e);
-					} finally {promiseLevel = promiseLevel - 1 |0}
+						} catch(e) {
+							return _NOCHECK_reject(e);
+						} finally {promiseLevel = promiseLevel - 1 |0;}
+					}
 				}
 				return curObj;
 			}
 		};
-		if (_Symbol_toStringTag !== false) curObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
 		return curObj;
-	};
+	}
 	function _NOCHECK_resolve(val){
-		if (isPromise(val)) {
-			return _NOCHECK_SPromise(function(accept, reject) {
+		//if (isPromise(val)) {
+		if (typeof val === "object" && val !== null && typeof val["then"] === "function") { // this is such a hot function that I decided to inline the call to isPromise
+			return val/*_NOCHECK_SPromise(function(accept, reject) {
 				val.then(accept, reject);
-			});
+			})*/;
 		}
 		// Only perform the check half the time. It greatly boosts performance because most times very few promise levels are used.
 		var curObj = {
-			"then": function(f){
+			"then": function(thenFunc){
 				try {
-					var maybePromise = f(val);
-					return isPromise(maybePromise) ? maybePromise : resolve(maybePromise);
+					return typeof catchFunc === "function" ? resolve( thenFunc(val) ) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": function(f){
-				try {
-					f();
-				} catch(e) {
-					return _NOCHECK_reject(e);
-				}
-				return curObj;
-			},
-			"catch": function(){return curObj}
+			"finally": finallyBasicHandler(curObj),
+			"catch": function(){return curObj;}
 		};
-		if (_Symbol_toStringTag !== false) curObj[_Symbol_toStringTag] = "Promise"; // disguise SPromise as internal
+		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // disguise SPromise as internal
 		return curObj;
-	};
+	}
 	SPromise["resolve"] = _NOCHECK_resolve;
 	function _NOCHECK_reject(val){
 		var curObj = {
 			"then": function(thenFunc, catchFunc){
 				try {
-					var maybePromise = typeof catchFunc === "function" ? catchFunc(val) : curObj;
-					return isPromise(maybePromise) ? maybePromise : resolve(maybePromise);
+					return typeof catchFunc === "function" ? resolve( catchFunc(val) ) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": function(f){
-				try {
-					f();
-				} catch(e) {
-					return _NOCHECK_reject(e);
-				}
-				return curObj;
-			},
+			"finally": finallyBasicHandler(curObj),
 			"catch": function(f){
 				// synchonously defered stacking allows for super performance
 				try {
 					// .catch succeeds by default
-					var maybePromise = f(val);
-					return isPromise(maybePromise) ? maybePromise : resolve(maybePromise);
+					return typeof f === "function" ? resolve(f(val)) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
 			}
 		};
-		if (_Symbol_toStringTag !== false) curObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
 		return curObj;
-	};
+	}
 	SPromise["reject"] = _NOCHECK_reject; // There is no need for a checking version of reject because of its limited lifespan
 	var hasWarnedAboutArguments = false;
 	SPromise["race"] = function(promisesArray){
@@ -591,38 +536,25 @@
 			if (!promisesArray || !promisesArray.forEach){
 				// check to see if it is an array or an iterable object
 				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.race.");
-				return resolve();
+				return undefinedResolve;
 			}
 			if (!hasWarnedAboutArguments && !promisesArray.length){
 				hasWarnedAboutArguments = true;
-				console.warn(Object.prototype.toString.call(promisesArray) + " is an empty array of promises passed to SPromise")
+				console.warn(Object.prototype.toString.call(promisesArray) + " is an empty array of promises passed to SPromise");
 			}
 		}
 		return SPromise(function(accept, reject){
-			var furfilled = false;
-			for (var index=0; index<promisesArray.length; index=index+1|0) {
-				var Cur = promisesArray[index];
-				if (isPromise(Cur)) {
-					Cur.then(function(Val){
-						if (furfilled === false) {
-							furfilled = true;
-							accept(Val);
-						} 
-					}, function(Val){
-						if (furfilled === false) {
-							furfilled = true;
-							reject(Val);
-						} 
-					});
-					if (furfilled) {
-						// if the promise is already furfilled, then exit early
-						return;
-					}
-				} else {
-					furfilled = true;
-					accept( Cur );
-					return; // exit early
-				} 
+			var unFurfilled = 1, index=0, Cur;
+			function acceptionCondition(Val){
+				if (unFurfilled) unFurfilled = 0, accept(Val);
+			}
+			function rejectionCondition(Val){
+				if (unFurfilled) unFurfilled = 0, reject(Val);
+			}
+			for (; index<promisesArray.length && unFurfilled; index=index+1|0) {
+				if (isPromise(Cur = promisesArray[index])) {
+					Cur.then(acceptionCondition, rejectionCondition);
+				} else acceptionCondition(Cur); // exit early
 			}
 		});
 	};
@@ -631,34 +563,25 @@
 			if (!promisesArray || !promisesArray.forEach){
 				// check to see if it is an array or an iterable object
 				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.all.");
-				return resolve();
+				return undefinedResolve;
 			}
 		}
 		return SPromise(function(accept, reject){
-			var leftToGo = 0, resultingValues = [];
-			for (var index=0; index < promisesArray.length; index = index + 1|0) {
-				var Cur = promisesArray[ index ];
-				if (isPromise(Cur)) {
-					leftToGo = leftToGo + 1|0;
-					Cur.then(function(Val){
-						resultingValues[index] = Val;
-						leftToGo = leftToGo - 1|0;
-						if (leftToGo === 0){
-							accept( resultingValues );
-						}
-					}, function(reason){
-						if (leftToGo > 0){
-							leftToGo = -1;
-							reject(reason);
-						}
-					});
-				} else {
-					resultingValues[index] = Cur;
-				}
+			function attachListener(index){
+				Cur.then(function(Val){
+					resultingValues[index] = Val;
+					leftToGo = leftToGo - 1|0;
+					if (leftToGo === 0) accept( resultingValues );
+				}, function(reason){
+					if (leftToGo > 0){
+						leftToGo = -1;
+						reject(reason);
+					}
+				});
 			}
-			if (!leftToGo){
-				accept( resultingValues );
-			}
+			var len=promisesArray.length|0, leftToGo = len, resultingValues = [], index=0, Cur;
+			for (; index < len; index = index + 1|0)
+				resultingValues[index] = isPromise(Cur = promisesArray[index]) ? attachListener(index) : Cur;
 		});
 	};
 	window["SPromise"] = SPromise;
