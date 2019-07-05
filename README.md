@@ -5,14 +5,14 @@ PromiseMeSpeed is currently the fastest javascript library, *promising* speedy E
 
 To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts that use PromiseMeSpeed.
 ```HTML
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/spromiseMeSpeedDEBUG.min.js?dl=0"></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/SPromiseMeSpeedDEBUG.min.js?dl=0"></script>
 ```
 Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call evil `document.write` inside your script.<br /><br />
 *Before:*
 ```HTML
 <!doctype HTML>
 <html><head>
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/spromiseMeSpeedDEBUG.min.js?dl=0"></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/SPromiseMeSpeedDEBUG.min.js?dl=0"></script>
 <script src="/path/to/my/script.js"></script>
 </head><body>
     ...
@@ -22,7 +22,7 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 ```HTML
 <!doctype HTML>
 <html><head>
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/spromiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/SPromiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
 <script src="/path/to/my/script.js" defer=""></script>
 </head><body>
     ...
@@ -41,7 +41,7 @@ Example code snippets:
 <!DOCTYPE HTML>
 <html><head>
 <title>SPromise Test Example</title>
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/SPromiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
 </head><body>
 <script>
 addEventListener("load", function(){
@@ -75,8 +75,16 @@ addEventListener("load", function(){
 </body></html>
 ```
 
+
+# PromiseMeSpeed.min.js VS PromiseMeSpeedDEBUG.min.js
+The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds many extra type checks and notifies you when the wrong type of object is passed to the SPromise API. For some of the errors, it even gives a suggestion on how to fix them. However, these checks come at a cost: performance. If you have already written your code well enough to not need these checks, then use PromiseMeSpeed.min.js for even better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
+
+```HTML
+<script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/PromiseMeSpeed.min.js?dl=0"></script>
+```
+
 # Benchmarks
-If you are a sensible guy like me, then you shouldn't take my word for the speed of PromiseMeSpeed. Rather, take the word of these benchmarks:
+If you are a sensible guy like me, then you shouldn't take my word for the speed of SPromiseMeSpeed. Rather, take the word of these benchmarks:
 
 ### Casual Promising
 Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js)
@@ -303,12 +311,6 @@ SPromiseR3: 0.007688210237602383ms
 [Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
 
 
-# PromiseMeSpeed.min.js VS PromiseMeSpeedDEBUG.min.js
-The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds many extra type checks and notifies you when the wrong type of object is passed to the SPromise API. For some of the errors, it even gives a suggestion on how to fix them. However, these checks come at a cost: performance. If you have already written your code well enough to not need these checks, then use PromiseMeSpeed.min.js for even better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
-
-```HTML
-<script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/promiseMeSpeed.min.js?dl=0"></script>
-```
 
 # PromiseMeSpeedAdvancedEnumerations.js
 
