@@ -33,8 +33,10 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 PromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
 
 1. It is called without the `new` operator.
-2. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
-3. It is a lot faster than native Chromium promises, even with (suprise, suprise!) `await`.
+1. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
+1. It is a lot faster than native Chromium promises, even with (suprise, suprise!) `await`.
+1. It skims and cuts corners to boost performance by reusing the same reference pased to callbacks as the source.
+1. All callbacks are invoked immediately after the promise is resolved without waiting until the next tick.
 
 Example code snippets:
 ```HTML
