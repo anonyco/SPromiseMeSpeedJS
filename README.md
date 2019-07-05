@@ -91,14 +91,14 @@ If you are a sensible guy like me, then you shouldn't take my word for the speed
 ### Casual Promising
 Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js)
 ```Javascript
-(async function(){
+(async function(requestIdleCallback, console, performance){
 	"use strict";
 	var resStr = "";
-	var nativePromise = window.Promise;
+	var nativePromise = window.Promise, idleOptions = {timeout: 11};
 	function test(str, f){
 		return new nativePromise(function(acc){
             var tests=[], tmp=0, SPromise = window.SPromise;
-            var cycleCount=13, intV=requestIdleCallback(function theeFunc(){
+            var cycleCount=5, intV=requestIdleCallback(function theeFunc(){
                 "use strict";
                 if (--cycleCount < 0) {
                     var res = tests.reduce((a, b) => a + b) / tests.length;
@@ -106,21 +106,22 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 					acc();
                     return;
                 }
-                var k = performance.now(), i = 0, Len = 8;
+                var k = performance.now(), i = 0, Len = 6;
                 (function test(v){
                     f(function(k){
-                        k(v+(v*13%11));
+                        k(v+(((v<<2)%11)|0)|0);
                     }).then(function(v){
-                        if (i++ < Len) {
-                            test(v%7);
+						i = i + 1|0;
+                        if (i < Len) {
+                            test(((v|0)%7)|0);
                         } else {
-                            tmp += v;
+                            tmp = tmp + (v|0)|0;
                             tests.push((performance.now() - k)/Len);
                         }
                     });
                 })(Math.random()*40|0);
-                requestIdleCallback(theeFunc);
-            });
+                requestIdleCallback(theeFunc, idleOptions);
+            }, idleOptions);
         });
     }
 
@@ -143,31 +144,31 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
 	await test("SPromiseR4: ", function(x){return SPromise(x)});
 	console.log(resStr);
-})();
+})(requestIdleCallback, console, performance);
 ```
 Console output (lower numbers = lower promise delay = better):
 ```
-NativeR1:   0.020721153794931106ms
-NativeR2:   0.020528846317364905ms
-NativeR3:   0.020913460712808255ms
-NativeR4:   0.021442306975726612ms
-BluebirdR1: 0.19572115259227127ms
-BluebirdR2: 0.18168269329740164ms
-BluebirdR3: 0.18274038470386025ms
-BluebirdR4: 0.1832211536776203ms
-SPromiseR1: 0.003413460105478477ms
-SPromiseR2: 0.003894230758305639ms
-SPromiseR3: 0.003317308325607043ms
-SPromiseR4: 0.0036057692621118175ms
+NativeR1:   0.04416666730927924ms
+NativeR2:   0.018666667165234685ms
+NativeR3:   0.026166668006529413ms
+NativeR4:   0.024499996410061918ms
+BluebirdR1: 0.27599999836335576ms
+BluebirdR2: 0.22883333343391615ms
+BluebirdR3: 0.22850000144292912ms
+BluebirdR4: 0.2271666657179594ms
+SPromiseR1: 0.006999998974303404ms
+SPromiseR2: 0.006166667056580384ms
+SPromiseR3: 0.005999997180576125ms
+SPromiseR4: 0.006833329098299146ms
 ```
 
 ### Synchronous Hellhole of Death Promising
 Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
 ```Javascirpt
-(async function(){
+(async function(requestIdleCallback, console, performance){
 	"use strict";
 	var resStr = "";
-	var nativePromise = window.Promise;
+	var nativePromise = window.Promise, idleOptions = {timeout: 11};
 	function test(str, f){
 		return new nativePromise(function(acc){
             var tests=[], tmp=0, SPromise = window.SPromise;
@@ -203,7 +204,7 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 					tests.push((performance.now() - k)/i);
 					requestIdleCallback(theeFunc);
                 }, 10);
-            });
+            }, idleOptions);
         });
     }
 
@@ -226,35 +227,36 @@ Benchmark code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
 	await test("SPromiseR4: ", function(x){return SPromise(x)});
 	console.log(resStr);
-})();
+})(requestIdleCallback, console, performance);
 ```
 Console output (lower numbers = lower promise delay = better):
 ```
-NativeR1:   0.005851722717231667ms
-NativeR2:   0.0057087326050364595ms
-NativeR3:   0.005649124145534756ms
-NativeR4:   0.005644660949588598ms
-BluebirdR1: 0.0004493026733776162ms
-BluebirdR2: 0.00038002014157711983ms
-BluebirdR3: 0.0003836669923096281ms
-BluebirdR4: 0.00038921356200205537ms
-SPromiseR1: 0.00028054809568800465ms
-SPromiseR2: 0.00018094635017007477ms
-SPromiseR3: 0.0001728134156664396ms
-SPromiseR4: 0.00017861175534150675ms
+NativeR1:   0.005961311340207942ms
+NativeR2:   0.005754425048820622ms
+NativeR3:   0.005737731933574963ms
+NativeR4:   0.005725685119539747ms
+BluebirdR1: 0.0004817428588488326ms
+BluebirdR2: 0.0003913345338446561ms
+BluebirdR3: 0.0003724441526742339ms
+BluebirdR4: 0.00038145446783488524ms
+SPromiseR1: 0.0002370834351062001ms
+SPromiseR2: 0.00017644500722724388ms
+SPromiseR3: 0.00017766571041022416ms
+SPromiseR4: 0.00017798614484476616ms
 ```
 
 ### Await Promising
 Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.11.0/bluebird.min.js):
 ```Javascript
-(async function(){
+(async function(performance, console){
 	"use strict";
 	var resStr="";
-	var nativePromise = window.Promise, performance = window.performance;
+	var nativePromise = window.Promise, idleOptions = {timeout: 10};
+	function acceptor(acc){acc();}
 	function test(str, f){
 		return new nativePromise(function(acc){
-            var tests=[], tmp=0, SPromise = window.SPromise, idleOptions = {timeout: 10};
-            var cycleCount=11, intV=requestIdleCallback(function theeFunc(){
+            var tests=[], SPromise = window.SPromise;
+            var cycleCount=6, intV=requestIdleCallback(function theeFunc(){
                 "use strict";
                 if (--cycleCount < 0) {
                     var res = tests.reduce((a, b) => a + b) / tests.length;
@@ -263,16 +265,13 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
                     return;
                 }
                 var k = performance.now(), i = 0;
-                (async function test(v){
-                    var v = await f(function(k){
-                        k(v+((v<<4)%11|0)|0);
-                    });
-					i = i + 1|0;
-                    if (i < 1536) {
-                        test(v%7|0);
+                (async function test(){
+                    await f(acceptor);
+                    if (i < 384) {
+						i = i+1|0;
+                        test();
                     } else {
-                        tmp += v;
-                        tests.push((performance.now() - k)/1536);
+                        tests.push((performance.now() - k)/384);
                 		requestIdleCallback(theeFunc, idleOptions);
                     }
                 })(Math.random()*40|0);
@@ -296,21 +295,21 @@ Benchmark Code (executed in the console at https://cdnjs.cloudflare.com/ajax/lib
 	await test("SPromiseR2: ", function(x){return SPromise(x)});
 	await test("SPromiseR3: ", function(x){return SPromise(x)});
 	console.log(resStr);
-})();
+})(performance, console);
 ```
 Console output (lower numbers = lower promise delay = better):
 ```
-NativeR1:   0.0076624644924033255ms
-NativeR2:   0.008196910509165415ms
-NativeR3:   0.007414772725992819ms
-BluebirdR1: 4.20462298769287ms
-BluebirdR2: 4.193633996216952ms
-BluebirdR3: 4.19275479402765ms
-SPromiseR1: 0.009224668567433335ms
-SPromiseR2: 0.007667199339046033ms
-SPromiseR3: 0.007688210237602383ms
+NativeR1:   0.008009982618912342ms
+NativeR2:   0.010225694394547543ms
+NativeR3:   0.01835503472749325ms
+BluebirdR1: 4.231184895818134ms
+BluebirdR2: 4.206684027773615ms
+BluebirdR3: 4.192039930558167ms
+SPromiseR1: 0.016039496535490295ms
+SPromiseR2: 0.010410156290971728ms
+SPromiseR3: 0.010818142375986403ms
 ```
-[Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
+[Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis. Also note that this paragraph has been a bit less applicable since Chrome's `await` recieved internal optimizations.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
 
 
 
