@@ -313,7 +313,7 @@ SPromiseR3: 0.010818142375986403ms
 
 
 
-# PromiseMeSpeedAdvancedEnumerations.js
+<!--# PromiseMeSpeedAdvancedEnumerations.js
 
 For a separate project I am using PromiseMeSpeed in, the default ECMAScript specification for promises is just simply too slow for my purposes. Thus, I have revised the whole thing to use lickety-fast enumerations. However, for this script, do not ever do `<script src="PromiseMeSpeedAdvancedEnumerations.js"></script>` as that will make your code really slow. Also do not use distribute this script unminified or without the `DEBUGMODE` variable not set to `true` as that will make your code really slow too. The way to use this script is to insert it into the scope of your actual script and minify it along with the rest of your script to increase performance to the limit. An example usage of this script is as follows.
 
@@ -330,7 +330,7 @@ SPromise_all(
 })[ENUM_SPROMISE_FINALLY](function(){
 	console.log("finally!")
 });
-```
+```-->
 
 <!--# PromiseRejectionEvent
 The current spec for Promises wants there to be a PromiseRejectionEvent. SPromise will asynchronously (via setTimeout) fire a PromiseRejectionEvent on the window object when there is a Promise that fails and has nothing to handle the failure. However, SPromise slightly deviates from this specification for the purposes of performance in so much that SPromise treats internal triggers from `Promise.all` and `Promise.race` same as ordinary handles. Thus, when a promise is rejected, but you called race/all on the promise, the promise wrongly never fires a PromiseRejectionEvent event. This is a known bug, but it will never be fixed because of the overhead involved in adding extra checks that verify whether a catch handler is internal or external. Further, any fix for this bug would only apply apply to SPromises: there would be no (reasonable/sane) way to patch calling native Promise.all on an array of SPromises that are about to be rejected. Observe.
