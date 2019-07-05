@@ -492,9 +492,9 @@
 		}
 		// Only perform the check half the time. It greatly boosts performance because most times very few promise levels are used.
 		var curObj = {
-			"then": function(thenFunc, catchFunc){
+			"then": function(thenFunc){
 				try {
-					return typeof catchFunc === "function" ? resolve( thenFunc(val) ) : undefinedResolve;
+					return typeof thenFunc === "function" ? resolve( thenFunc(val) ) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
