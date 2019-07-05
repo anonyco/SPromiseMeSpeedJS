@@ -1,6 +1,6 @@
 // ==ClosureCompiler==
 // @compilation_level ADVANCED_OPTIMIZATIONS
-// @language_out ECMASCRIPT_NEXT
+// @language_out ECMASCRIPT6_STRICT
 // ==/ClosureCompiler==
 
 // The javascript promise library that promises you SPEED, and lots of it
@@ -60,8 +60,8 @@
 				if (stage === 0){
 					// promise has not yet completed...
 					return _NOCHECK_SPromise(function(accept, reject){
-						var finalAcceptor = typeof tFunc === "function" ? function(){accept(tFunc(retVal))} : accept;
-						var finalRejector = typeof cFunc === "function" ? function(){reject(cFunc(retVal))} : reject;
+						var finalAcceptor = typeof tFunc === "function" ? function(){accept(tFunc(retVal));} : accept;
+						var finalRejector = typeof cFunc === "function" ? function(){reject(cFunc(retVal));} : reject;
 						
 						if (thenFuncs !== null) {
 							if (typeof thenFuncs === "function") {
@@ -260,8 +260,8 @@
 				if (stage === 0){
 					// promise has not yet completed...
 					return SPromise(function(accept, reject){
-						var finalAcceptor = typeof tFunc === "function" ? function(){accept(tFunc(retVal))} : accept;
-						var finalRejector = typeof cFunc === "function" ? function(){reject(cFunc(retVal))} : reject;
+						var finalAcceptor = typeof tFunc === "function" ? function(){accept(tFunc(retVal));} : accept;
+						var finalRejector = typeof cFunc === "function" ? function(){reject(cFunc(retVal));} : reject;
 						
 						if (thenFuncs !== null) {
 							if (typeof thenFuncs === "function") {
@@ -415,7 +415,7 @@
 				// synchonously defered stacking allows for super performance
 				if (typeof f !== "function") return curObj;
 				if (isInsidePromise === true) {
-					return _NOCHECK_SPromise(function(accept){
+					return _NOCHECK_SPromise(function(accept, reject){
 						persuadoStack.push(
 							function(){
 								try {
@@ -438,7 +438,7 @@
 					var newVal = null;
 					try {
 						if (isInsidePromise = promiseLevel === promiseBufferLvl){
-							persuadoStack.push(function(){ f(val) });
+							persuadoStack.push(function(){ f(val); });
 						} else {
 							newVal = f(val);
 							if (isInsidePromise === true && promiseLevel === 1) { // if this is the outermost promise
@@ -492,7 +492,7 @@
 		}
 		// Only perform the check half the time. It greatly boosts performance because most times very few promise levels are used.
 		var curObj = {
-			"then": function(thenFunc){
+			"then": function(thenFunc, catchFunc){
 				try {
 					return typeof catchFunc === "function" ? resolve( thenFunc(val) ) : undefinedResolve;
 				} catch(e) {
