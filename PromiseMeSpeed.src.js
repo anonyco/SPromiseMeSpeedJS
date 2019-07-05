@@ -33,17 +33,6 @@
 		}
 		isInsidePromise = false;
 	}
-	
-	function finallyBasicHandler(curObj) {
-		return function(f) {
-			try {
-				typeof f === "function" && f();
-			} catch(e) {
-				return _NOCHECK_reject(e);
-			}
-			return curObj;
-		};
-	}
 
 	function SPromise(func){
 		// simple/super/speedy/synchronous promise
@@ -499,7 +488,14 @@
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": finallyBasicHandler(curObj),
+			"finally": function(f) {
+				try {
+					typeof f === "function" && f();
+				} catch(e) {
+					return _NOCHECK_reject(e);
+				}
+				return curObj;
+			},
 			"catch": function(){return curObj;}
 		};
 		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // disguise SPromise as internal
@@ -515,7 +511,14 @@
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": finallyBasicHandler(curObj),
+			"finally": function(f) {
+				try {
+					typeof f === "function" && f();
+				} catch(e) {
+					return _NOCHECK_reject(e);
+				}
+				return curObj;
+			},
 			"catch": function(f){
 				// synchonously defered stacking allows for super performance
 				try {
