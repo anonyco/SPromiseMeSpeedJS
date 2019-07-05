@@ -12,7 +12,7 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 ```HTML
 <!doctype HTML>
 <html><head>
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0"></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/spromiseMeSpeedDEBUG.min.js?dl=0"></script>
 <script src="/path/to/my/script.js"></script>
 </head><body>
     ...
@@ -22,7 +22,7 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 ```HTML
 <!doctype HTML>
 <html><head>
-<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/promiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
+<script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/spromiseMeSpeedDEBUG.min.js?dl=0" defer=""></script>
 <script src="/path/to/my/script.js" defer=""></script>
 </head><body>
     ...
