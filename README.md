@@ -1,4 +1,4 @@
-# PromiseMeSpeed
+# SPromiseMeSpeed
 PromiseMeSpeed is currently the fastest [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) javascript library and polyfill, *promising* a speedy implementation that are ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
 
 # Quick Start
