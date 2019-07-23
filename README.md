@@ -1,9 +1,9 @@
 # SPromiseMeSpeed
-PromiseMeSpeed is currently the fastest [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) javascript library and polyfill, *promising* a speedy implementation that are ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of PromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
+SPromiseMeSpeed is currently the fastest [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) javascript library and polyfill, *promising* a speedy implementation that are ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of SPromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance and page load speed.
 
 # Quick Start
 
-To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts that use PromiseMeSpeed.
+To use, simply drop the following snippet of HTML code into your `<head>` before all of the scripts that use SPromiseMeSpeed.
 ```HTML
 <script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/SPromiseMeSpeedDEBUG.min.js?dl=0"></script>
 ```
@@ -30,7 +30,7 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 ```
 
 # API
-PromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
+SPromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
 
 1. It is called without the `new` operator.
 1. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
@@ -78,11 +78,11 @@ addEventListener("load", function(){
 ```
 
 
-# PromiseMeSpeed.min.js VS PromiseMeSpeedDEBUG.min.js
-The main difference between the two versions is that PromiseMeSpeedDEBUG is intended for development. It adds many extra type checks and notifies you when the wrong type of object is passed to the SPromise API. For some of the errors, it even gives a suggestion on how to fix them. However, these checks come at a cost: performance. If you have already written your code well enough to not need these checks, then use PromiseMeSpeed.min.js for even better performance. PromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from PromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with PromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use PromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
+# SPromiseMeSpeed.min.js VS SPromiseMeSpeedDEBUG.min.js
+The main difference between the two versions is that SPromiseMeSpeedDEBUG is intended for development. It adds many extra type checks and notifies you when the wrong type of object is passed to the SPromise API. For some of the errors, it even gives a suggestion on how to fix them. However, these checks come at a cost: performance. If you have already written your code well enough to not need these checks, then use SPromiseMeSpeed.min.js for even better performance. SPromiseMeSpeed.js will run blind untill it gets done running or it hits a wall and crashes. For example, if you pass something that is not a function to `window.SPromise` from SPromiseMeSpeedDEBUG.min.js, then it will print a pretty error message saying you passed a wrong type to the function. But with SPromiseMeSpeed.min.js, the console will say something along the lines of 'cannot call null or undefined' or 'null or undefined is not a function.' To use SPromiseMeSpeed without the DEBUG, insert the following alternative code into your `<head>`:
 
 ```HTML
-<script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/PromiseMeSpeed.min.js?dl=0"></script>
+<script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/SPromiseMeSpeed.min.js?dl=0"></script>
 ```
 
 # Benchmarks
@@ -313,9 +313,9 @@ SPromiseR3: 0.010818142375986403ms
 
 
 
-<!--# PromiseMeSpeedAdvancedEnumerations.js
+<!--# SPromiseMeSpeedAdvancedEnumerations.js
 
-For a separate project I am using PromiseMeSpeed in, the default ECMAScript specification for promises is just simply too slow for my purposes. Thus, I have revised the whole thing to use lickety-fast enumerations. However, for this script, do not ever do `<script src="PromiseMeSpeedAdvancedEnumerations.js"></script>` as that will make your code really slow. Also do not use distribute this script unminified or without the `DEBUGMODE` variable not set to `true` as that will make your code really slow too. The way to use this script is to insert it into the scope of your actual script and minify it along with the rest of your script to increase performance to the limit. An example usage of this script is as follows.
+For a separate project I am using SPromiseMeSpeed in, the default ECMAScript specification for promises is just simply too slow for my purposes. Thus, I have revised the whole thing to use lickety-fast enumerations. However, for this script, do not ever do `<script src="SPromiseMeSpeedAdvancedEnumerations.js"></script>` as that will make your code really slow. Also do not use distribute this script unminified or without the `DEBUGMODE` variable not set to `true` as that will make your code really slow too. The way to use this script is to insert it into the scope of your actual script and minify it along with the rest of your script to increase performance to the limit. An example usage of this script is as follows.
 
 ```Javascript
 SPromise_all(
@@ -347,4 +347,4 @@ rejectThePromise(); // should cause a PromiseRejectionEvent to be emitted, but n
 ```-->
 
 # Think Before You Pull!
-The purpose of PromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of PromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
+The purpose of SPromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of SPromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
