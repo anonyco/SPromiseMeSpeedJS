@@ -1,7 +1,5 @@
 <!doctype html>
-<html>
-<head><title>PromiseMeSpeed Compliance Tests</title></head>
-<body>
+<html><head><title>PromiseMeSpeed Compliance Tests</title></head><body>
 <center><h1>Compliance Tests for PromiseMeSpeed</h1></center>
 <pre id="scriptError" style="color:#c00"></pre>
 <table style="border-collapse:collapse;max-width:100%"><thead>
@@ -49,10 +47,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 					bindArrayPrototypePush(expectations[testIndex] = []),
 					bindArrayPrototypePush(results[testIndex] = [])
 				);
-			} catch(e) {
-				e && results[testIndex].push(e.message + "\n" + e.stack);
-			}
-			
+			} catch(e) {e && results[testIndex].push(e.message + "\n" + e.stack)}
 		}
 		setTimeout(function(){
 			// now, check to see which arrays are the same and which differ to determine which test failed
@@ -100,13 +95,13 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		'"then" in promise', '"catch" in promise', '"finally" in promise',
 		'Promise.all', 'Promise.race', 'Promise.reject', 'Promise.resolve'
 	);
-	
+
 	var instance = new PromiseConstructor(function(){});
-	
+
 	if (typeof instance.then === "function") output('"then" in promise');
 	if (typeof instance.catch === "function") output('"catch" in promise');
 	if (typeof instance.finally === "function") output('"finally" in promise');
-	
+
 	if (typeof PromiseConstructor.all === "function") output('Promise.all');
 	if (typeof PromiseConstructor.race === "function") output('Promise.race');
 	if (typeof PromiseConstructor.reject === "function") output('Promise.reject');
@@ -379,19 +374,19 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 		}
 	});
 }, function(PromiseConstructor, expect, output){
-	// ensure that .toString returns [object Promise] for new instances
+	// ensures .toString returns [object Promise] for new instances
 	expect('promise.toString() === "[object Promise]"');
 	output('promise.toString() === ' + JSON.stringify(
 		"" + new PromiseConstructor(function(){})
 	));
 }, function(PromiseConstructor, expect, output){
-	// ensure that .toString returns [object Promise] for resolves
+	// ensures .toString returns [object Promise] for resolves
 	expect('promise.toString() === "[object Promise]"');
 	output('promise.toString() === ' + JSON.stringify(
 		"" + PromiseConstructor.resolve(null)
 	));
 }, function(PromiseConstructor, expect, output){
-	// ensure that .toString returns [object Promise] for rejections
+	// ensures .toString returns [object Promise] for rejections
 	expect('promise.toString() === "[object Promise]"');
 	output('promise.toString() === ' + JSON.stringify(
 		"" + PromiseConstructor.reject(null)
