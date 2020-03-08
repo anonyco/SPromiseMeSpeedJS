@@ -15,13 +15,12 @@
 	const exec = function(x){x();};
 	const promiseBufferLvl = 128; // length of the promise buffer for double stack buffering
 	const isPromise = SPromise["isPromise"] = function(x){ // determines whether something is able to be used as a promise
-		return typeof x === "object" && x !== null && typeof x["then"] === "function" /*&& typeof x["catch"] === "function" && typeof x["finally"] === "function"*/;
+		return typeof x === "object" && x !== null && typeof x["then"] === "function";
 	};
 	var promiseLevel = 0;
 	var isInsidePromise = false; // because javascript is single threaded, we can use this to determine if there is an outermost promise
 	var pStackLength = 0;		 // the current size of the persuadoStack
 	var _Symbol_toStringTag = typeof Symbol !== "undefined" && Symbol.toStringTag;
-	var symbolicToStringTagExists = typeof _Symbol_toStringTag === "symbol";
 	var undefinedResolve = resolve();
 
 	function resolvePends(){
@@ -33,11 +32,19 @@
 		}
 		isInsidePromise = false;
 	}
+	
+	/** @constructor */
+	function SPromise_construct(then, error, final) {
+		this["then"] = then;
+		this["error"] = error;
+		this["finally"] = final;
+	}
+	if (typeof _Symbol_toStringTag === "symbol") SPromise_construct.prototype[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
 
 	function SPromise(func){
 		// simple/super/speedy/synchronous promise
-		var retVal, stage=0, thenFuncs = null, catchFuncs = null, finallies = null,  retObj = {
-			"then": function(tFunc, cFunc){
+		var retVal, stage=0, thenFuncs = null, catchFuncs = null, finallies = null,  retObj = new SPromise_construct(
+			function(tFunc, cFunc){
 				if (DEBUGMODE){
 					if (tFunc != undefined && typeof tFunc !== "function"){
 						console.warn(Object.prototype.toString.call(tFunc) + " is not a valid function to be called after a successful promise");
@@ -69,17 +76,6 @@
 						} else catchFuncs = finalRejector;
 					});
 				} else try {
-					/*var maybeInnerPromise = null;
-					if (stage === 2) {
-						if (typeof tFunc === "function") {
-							maybeInnerPromise = tFunc(retVal);
-						}
-					} else { // if (stage === 1)
-						if (typeof cFunc === "function") {
-							maybeInnerPromise = _NOCHECK_reject( cFunc(retVal) );
-						}
-					}
-					return isPromise(maybeInnerPromise) ? maybeInnerPromise : _NOCHECK_resolve(maybeInnerPromise);*/
 					return stage === 2 ? (
 						typeof tFunc === "function" ? _NOCHECK_resolve( tFunc(retVal) ) : undefinedResolve
 					) : (
@@ -87,7 +83,7 @@
 					);
 				} catch(e) {return _NOCHECK_reject(e);}
 			},
-			"catch": function(cFunc){
+			function(cFunc){
 				if (DEBUGMODE){
 					if (cFunc != undefined && typeof cFunc !== "function"){
 						console.warn(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
@@ -121,7 +117,7 @@
 					}
 				}
 			},
-			"finally": function(fFunc){
+			function(fFunc){
 				if (DEBUGMODE){
 					if (fFunc != undefined && typeof fFunc !== "function"){
 						console.warn(Object.prototype.toString.call(fFunc) + " is not a valid function to be called 'finally' after promise");
@@ -142,8 +138,7 @@
 				}
 				return retObj;
 			}
-		};
-		if (symbolicToStringTagExists === true) retObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		);
 		// stage undefined = unfulfilled
 		// stage true = accepted
 		// stage false = rejected
@@ -152,7 +147,7 @@
 			// This specific order should allow for max GZip compression
 			if (stage === 0) {
 				if (isPromise(x)) {
-					x.then(acceptP, rejectP); // wait for further commitment before resolving. [FYI: this take a non-compliant shortcut]
+					x.then(acceptP, rejectP); // wait for further commitment before resolving. [FYI: this takes a non-compliant shortcut]
 				} else {
 					retVal = x;
 					stage = 2;
@@ -235,8 +230,8 @@
 	}
 	function _NOCHECK_SPromise(func){
 		// simple/super/speedy/synchronous promise
-		var retVal, stage=0, thenFuncs = null, catchFuncs = null, finallies = null, retObj = {
-			"then": function(tFunc, cFunc){
+		var retVal, stage=0, thenFuncs = null, catchFuncs = null, finallies = null, retObj = new SPromise_construct(
+			function(tFunc, cFunc){
 				if (DEBUGMODE){
 					if (tFunc && typeof tFunc !== "function"){
 						console.error(Object.prototype.toString.call(tFunc) + " is not a valid function to be called after a successful promise");
@@ -276,7 +271,7 @@
 					);
 				} catch(e) {return _NOCHECK_reject(e);}
 			},
-			"catch": function(cFunc){
+			function(cFunc){
 				if (DEBUGMODE){
 					if (cFunc && typeof cFunc !== "function"){
 						console.error(Object.prototype.toString.call(cFunc) + " is not a valid function to be called after a rejected promise");
@@ -312,7 +307,7 @@
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": function(fFunc){
+			function(fFunc){
 				if (DEBUGMODE){
 					if (typeof fFunc !== "function"){
 						console.error(Object.prototype.toString.call(fFunc) + " is not a valid function to be called 'finally' after promise");
@@ -331,8 +326,7 @@
 				}
 				return retObj; // transparently propagate events
 			}
-		};
-		if (symbolicToStringTagExists === true) retObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		);
 		// stage undefined = unfulfilled
 		// stage true = accepted
 		// stage false = rejected
@@ -399,8 +393,8 @@
 				val.then(accept, reject);
 			})*/;
 		}
-		var curObj = {
-			"then": function(f){
+		var curObj = new SPromise_construct(
+			function(f){
 				// synchonously defered stacking allows for super performance
 				if (typeof f !== "function") return curObj;
 				if (isInsidePromise === true) {
@@ -440,8 +434,8 @@
 					return _NOCHECK_resolve(newVal);
 				}
 			},
-			"catch": function(){return curObj;},
-			"finally": function(f){
+			function(){return curObj;},
+			function(f){
 				// synchonously defered stacking allows for super performance
 				if (typeof f === "function") {
 					if (isInsidePromise === true) {
@@ -468,8 +462,7 @@
 				}
 				return curObj;
 			}
-		};
-		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
+		);
 		return curObj;
 	}
 	function _NOCHECK_resolve(val){
@@ -480,46 +473,37 @@
 			})*/;
 		}
 		// Only perform the check half the time. It greatly boosts performance because most times very few promise levels are used.
-		var curObj = {
-			"then": function(thenFunc){
+		var curObj = new SPromise_construct(
+			function(thenFunc){
 				try {
 					return typeof thenFunc === "function" ? resolve( thenFunc(val) ) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": function(f) {
+			function(){return curObj;},
+			function(f) {
 				try {
 					typeof f === "function" && f();
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
 				return curObj;
-			},
-			"catch": function(){return curObj;}
-		};
-		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // disguise SPromise as internal
+			}
+		);
 		return curObj;
-	}
+	};
 	SPromise["resolve"] = _NOCHECK_resolve;
 	function _NOCHECK_reject(val){
-		var curObj = {
-			"then": function(thenFunc, catchFunc){
+		return new SPromise_construct(
+			function(thenFunc, catchFunc){
 				try {
 					return typeof catchFunc === "function" ? resolve( catchFunc(val) ) : undefinedResolve;
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
 			},
-			"finally": function(f) {
-				try {
-					typeof f === "function" && f();
-				} catch(e) {
-					return _NOCHECK_reject(e);
-				}
-				return curObj;
-			},
-			"catch": function(f){
+			function(f){
 				// synchonously defered stacking allows for super performance
 				try {
 					// .catch succeeds by default
@@ -527,20 +511,31 @@
 				} catch(e) {
 					return _NOCHECK_reject(e);
 				}
+			},
+			function(f) {
+				try {
+					typeof f === "function" && f();
+				} catch(e) {
+					return _NOCHECK_reject(e);
+				}
+				return curObj;
 			}
-		};
-		if (symbolicToStringTagExists === true) curObj[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
-		return curObj;
+		);
 	}
 	SPromise["reject"] = _NOCHECK_reject; // There is no need for a checking version of reject because of its limited lifespan
 	var hasWarnedAboutArguments = false;
-	SPromise["race"] = function(promisesArray){
+	function maybeWarnAboutArguments(promisesArray, name) {
 		if (DEBUGMODE){
-			if (!promisesArray || !promisesArray.forEach){
+			if (typeof promisesArray !== "object" || typeof promisesArray.forEach !== "function"){
 				// check to see if it is an array or an iterable object
-				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.race.");
+				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, you must call Array.prototype.slice.call on the object before passing it to SPromise." + name);
 				return undefinedResolve;
 			}
+		}
+	}
+	SPromise["race"] = function(promisesArray){
+		if (DEBUGMODE){
+			maybeWarnAboutArguments(promisesArray, "race");
 			if (!hasWarnedAboutArguments && !promisesArray.length){
 				hasWarnedAboutArguments = true;
 				console.warn(Object.prototype.toString.call(promisesArray) + " is an empty array of promises passed to SPromise");
@@ -562,17 +557,12 @@
 		});
 	};
 	SPromise["all"] = function(promisesArray){
-		if (DEBUGMODE){
-			if (!promisesArray || !promisesArray.forEach){
-				// check to see if it is an array or an iterable object
-				console.error(Object.prototype.toString.call(promisesArray) + " is not a valid iterable array of promises. If you are using an array-like object, then you must call Array.prototype.slice.call on the object before passing it to SPromise.all.");
-				return undefinedResolve;
-			}
-		}
+		if (DEBUGMODE) maybeWarnAboutArguments(promisesArray, "all");
+		
 		return SPromise(function(accept, reject){
 			function attachListener(index){
-				Cur.then(function(Val){
-					resultingValues[index] = Val;
+				curItem.then(function(val){
+					resultingValues[index|0] = val;
 					leftToGo = leftToGo - 1|0;
 					if (leftToGo === 0) accept( resultingValues );
 				}, function(reason){
@@ -582,10 +572,21 @@
 					}
 				});
 			}
-			var len=promisesArray.length|0, leftToGo = len, resultingValues = [], index=0, Cur;
+			var lastValue = null, len=promisesArray.length|0, leftToGo = len, resultingValues = [], index=0, curItem;
 			for (; index < len; index = index + 1|0)
-				resultingValues[index] = isPromise(Cur = promisesArray[index]) ? attachListener(index) : Cur;
+				if (isPromise(curItem = promisesArray[index])) {
+					resultingValues[index] = lastValue;
+					attachListener( index );
+				} else {
+					leftToGo = leftToGo - 1|0;
+					resultingValues[index] = lastValue = curItem;
+				}
+			if (leftToGo === 0) accept( resultingValues );
 		});
 	};
-	window["SPromise"] = SPromise;
-})(typeof self === "undefined" ? this : self);
+	if (typeof module !== "undefined") {
+		module["exports"] = SPromise;
+	} else {
+		window["SPromise"] = SPromise;
+	}
+})(typeof self === "undefined" ? this || global : self);
