@@ -466,11 +466,8 @@
 		return curObj;
 	}
 	function _NOCHECK_resolve(val){
-		//if (isPromise(val)) {
 		if (typeof val === "object" && val !== null && typeof val["then"] === "function") { // this is such a hot function that I decided to inline the call to isPromise
-			return val/*_NOCHECK_SPromise(function(accept, reject) {
-				val.then(accept, reject);
-			})*/;
+			return val;
 		}
 		// Only perform the check half the time. It greatly boosts performance because most times very few promise levels are used.
 		var curObj = new SPromise_construct(
@@ -495,7 +492,10 @@
 	};
 	SPromise["resolve"] = _NOCHECK_resolve;
 	function _NOCHECK_reject(val){
-		curObj = new SPromise_construct(
+		if (typeof val === "object" && val !== null && typeof val["then"] === "function") { // this is such a hot function that I decided to inline the call to isPromise
+			return val;
+		}
+		var curObj = new SPromise_construct(
 			function(thenFunc, catchFunc){
 				try {
 					return typeof catchFunc === "function" ? resolve( catchFunc(val) ) : undefinedResolve;
