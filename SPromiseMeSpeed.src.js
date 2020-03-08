@@ -36,7 +36,7 @@
 	/** @constructor */
 	function SPromise_construct(then, error, final) {
 		this["then"] = then;
-		this["error"] = error;
+		this["catch"] = error;
 		this["finally"] = final;
 	}
 	if (typeof _Symbol_toStringTag === "symbol") SPromise_construct.prototype[_Symbol_toStringTag] = "Promise"; // to disguise SPromise as internal
@@ -495,7 +495,7 @@
 	};
 	SPromise["resolve"] = _NOCHECK_resolve;
 	function _NOCHECK_reject(val){
-		return new SPromise_construct(
+		curObj = new SPromise_construct(
 			function(thenFunc, catchFunc){
 				try {
 					return typeof catchFunc === "function" ? resolve( catchFunc(val) ) : undefinedResolve;
@@ -521,6 +521,7 @@
 				return curObj;
 			}
 		);
+		return curObj;
 	}
 	SPromise["reject"] = _NOCHECK_reject; // There is no need for a checking version of reject because of its limited lifespan
 	var hasWarnedAboutArguments = false;
