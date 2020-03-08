@@ -2,14 +2,9 @@
 <html><head><title>PromiseMeSpeed Compliance Tests</title></head><body>
 <center><h1>Compliance Tests for PromiseMeSpeed</h1></center>
 <pre id="scriptError" style="color:#c00"></pre>
-<table style="border-collapse:collapse;max-width:100%"><thead>
-	<tr><th>Vendor</th><th>Code Snippet</th><th>Expected Output</th><th>Actual Output</th></tr>
-</thead><tbody id="testResults"></tbody></table>
-<script src="SPromiseMeSpeed.min.js" defer=""
-		onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.4/bluebird.core.min.js" defer=""
-		onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script>
-<script>
+<table style="border-collapse:collapse;max-width:100%"><thead><tr><th>Vendor</th><th>Code Snippet</th><th>Expected Output</th><th>Actual Output</th></tr></thead><tbody id="testResults"></tbody></table>
+<script src="SPromiseMeSpeed.min.js" defer="" onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.4/bluebird.core.min.js" defer="" onerror="document.getElementById('scriptError').textContent+=arguments[0].message+'\n\n'"></script><script>
 "use strict";
 // my own test manager with lots of Promise tests
 addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseTests){
@@ -29,8 +24,7 @@ addEventListener("DOMContentLoaded", (function(nativeBrowserPromise, allPromiseT
 		return result.slice(0, -1);
 	}
 	function doTestsForVendor(promiseVendor){
-		var expectations = [];
-		var results = [];
+		var expectations = [], results = [];
 		
 		function bindArrayPrototypePush(expectationsOrResults){
 			return function(){
@@ -97,15 +91,16 @@ window.Promise, // Bluebird overides window.Promise, so we must get window.Promi
 	);
 
 	var instance = new PromiseConstructor(function(){});
+	function isFunc(x){return typeof x==="function"}
 
-	if (typeof instance.then === "function") output('"then" in promise');
-	if (typeof instance.catch === "function") output('"catch" in promise');
-	if (typeof instance.finally === "function") output('"finally" in promise');
+	if (isFunc(instance.then)) output('"then" in promise');
+	if (isFunc(instance.catch)) output('"catch" in promise');
+	if (isFunc(instance.finally)) output('"finally" in promise');
 
-	if (typeof PromiseConstructor.all === "function") output('Promise.all');
-	if (typeof PromiseConstructor.race === "function") output('Promise.race');
-	if (typeof PromiseConstructor.reject === "function") output('Promise.reject');
-	if (typeof PromiseConstructor.resolve === "function") output('Promise.resolve');
+	if (isFunc(PromiseConstructor.all)) output('Promise.all');
+	if (isFunc(PromiseConstructor.race)) output('Promise.race');
+	if (isFunc(PromiseConstructor.reject)) output('Promise.reject');
+	if (isFunc(PromiseConstructor.resolve)) output('Promise.resolve');
 }, function(PromiseConstructor, expect, output){
 	// Promise{accept}.then pipes the value
 	expect('Promise{accept}.then pipe');
