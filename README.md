@@ -346,5 +346,6 @@ SPromise.all(promiseToBeRejected)
 rejectThePromise(); // should cause a PromiseRejectionEvent to be emitted, but no PromiseRejectionEvent ever happens
 ```-->
 
-# Think Before You Pull!
+<!--# Think Before You Pull!
 The purpose of SPromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of SPromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
+-->
