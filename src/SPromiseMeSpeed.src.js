@@ -1,14 +1,10 @@
-// ==ClosureCompiler==
-// @compilation_level ADVANCED_OPTIMIZATIONS
-// @language_out ECMASCRIPT6_STRICT
-// ==/ClosureCompiler==
-
 // The javascript promise library that promises you SPEED, and lots of it
+///////////////////////
+/** @define {boolean} */
+const DEBUGMODE = false; // the reason I use a variable like this is because closure compiler automatically inlines and optimizes it
 (function(window){
 	"use strict";
-	// the reason I use a variable like this is because closure compiler automatically inlines and optimizes it
-	///////////////////////
-	const DEBUGMODE = true;
+	
 	///////////////////////
 	const persuadoStack = []; // Defered loading of promises to outermost promise scope so as to not exceed the stack level
 	const proxy = function(func){func(this);};
@@ -21,7 +17,7 @@
 	var isInsidePromise = false; // because javascript is single threaded, we can use this to determine if there is an outermost promise
 	var pStackLength = 0;		 // the current size of the persuadoStack
 	var _Symbol_toStringTag = typeof Symbol !== "undefined" && Symbol.toStringTag;
-	var undefinedResolve = resolve();
+	var undefinedResolve = resolve(undefined);
 
 	function resolvePends(){
 		if (pStackLength) {
@@ -386,6 +382,7 @@
 		} catch(e) {rejectP(e);}
 		return retObj;
 	}
+	
 	function resolve(val){
 		//if (isPromise(val)) {
 		if (typeof val === "object" && val !== null && typeof val["then"] === "function") { // this is such a hot function that I decided to inline the call to isPromise
@@ -585,9 +582,13 @@
 			if (leftToGo === 0) accept( resultingValues );
 		});
 	};
-	if (typeof module !== "undefined") {
-		module["exports"] = SPromise;
-	} else {
-		window["SPromise"] = SPromise;
-	}
-})(typeof self === "undefined" ? this || global : self);
+    
+    function factory(obj) {
+        return obj === window ? obj.SPromise = SPromise : SPromise;
+    }
+	
+	typeof exports === 'object' && typeof module !== 'undefined' ? module["exports"] = SPromise :
+		typeof define == typeof factory && typeof define === "function" && define["amd"] ? define(factory) :
+		factory(window);
+	
+})(typeof self == "object" ? self : typeof global == "object" ? global : this);

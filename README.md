@@ -29,14 +29,24 @@ Or, alternatively if you want faster page loading, add a defer to every script t
 </body></html>
 ```
 
+## RequireJS and NodeJS Setup
+
+For dropping into either RequireJS or NodeJS, please use [the `spromisemespeed` npm repository](https://npmjs.org/package/spromisemespeed), [this minified file](https://github.com/anonyco/SPromiseMeSpeed/blob/master/dist/SPromiseMeSpeed.min.js), or the corresponding [source code file](https://github.com/anonyco/SPromiseMeSpeed/blob/master/src/SPromiseMeSpeed.src.js). To install via npm, use the following code.
+
+```Bash
+npm install spromisemespeed
+```
+
+After installing via npm, one can use `require("spromisemespeed")`. Alternatively, one can drop the *SPromiseMeSpeed.min.js* file into the same directory as their NodeJS script and do `require("./SPromiseMeSpeed.min.js")`. Both methods are functionally equivalent.
+
 # API
 SPromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
 
 1. It is called without the `new` operator.
+1. All callbacks are invoked immediately after the promise is resolved without waiting until the next tick.
 1. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
 1. It is a lot faster than native Chromium promises, even with (suprise, suprise!) `await`.
 1. It skims and cuts corners to boost performance by reusing the same reference pased to callbacks as the source.
-1. All callbacks are invoked immediately after the promise is resolved without waiting until the next tick.
 
 Example code snippets:
 ```HTML
@@ -84,6 +94,40 @@ The main difference between the two versions is that SPromiseMeSpeedDEBUG is int
 ```HTML
 <script src="https://dl.dropboxusercontent.com/s/i8om2fcz5izdeoj/SPromiseMeSpeed.min.js?dl=0"></script>
 ```
+
+
+## RequireJS and ES Module API Documentation
+
+For NodeJS, calling `require("SPromiseMeSpeed.min.js")` yields the function `SPromise`.
+
+```Javascript
+module.exports = function(handle) {/*...*/};
+```
+
+As for example snippets, observe the way to require modules below.
+
+```Javascript
+    const SPromise = require("spromisemespeed");
+```
+
+Or, one can use the new and shiny [ES6 module importation](https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/import) statements.
+
+
+```Javascript
+    // Variation 1
+    import {encode, decode} from "spromisemespeed";
+```
+
+```Javascript
+    // Variation 2
+    import * as SPromiseModule from "spromisemespeed";
+    const SPromise = SPromiseModule.SPromise;
+```
+
+
+## npm Project
+This DEBUG build of this project can be found on [npm here at this link](https://npmjs.org/package/spromisemespeed). The faster unchecked build can be found on [npm here at this other link](https://npmjs.org/package/spromisemespeed-fast).
+
 
 # Benchmarks
 If you are a sensible guy like me, then you shouldn't take my word for the speed of SPromiseMeSpeed. Rather, take the word of these benchmarks:
@@ -310,6 +354,26 @@ SPromiseR2: 0.010410156290971728ms
 SPromiseR3: 0.010818142375986403ms
 ```
 [Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis. Also note that this paragraph has been a bit less applicable since Chrome's `await` recieved internal optimizations.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
+
+## Development
+
+On linux, the project can be developed by cloning it with the following command line.
+
+```Bash
+git clone https://github.com/anonyco/SPromiseMeSpeedJS.git; cd SPromiseMeSpeedJS; npm run install-dev
+```
+
+Emphasize the `npm run install-dev` which downloads `closure-compiler.jar` into the repository for minifying the files.
+
+Now that the repository is cloned, edit the files as one see fit. Now that the files have been edited, run the following in the terminal in the root folder of the repository in order to minify the NodeJS JavaScript files.
+
+```Bash
+npm run build
+```
+
+## Continuity
+
+I try my best to be a realist, and what's more realistic than death? I am going to die someday and it may be tomorrow in a car crash. You never know. As I have no coder freinds to look out for my projects, I'm looking for anyone who wants to be a collaborator on this project in the event of the unforseen. Reach out to me at wowzeryest@gmail.com. If issues/pulls start piling up over the course of months, assume the worst. As I am trying my best to do my part to help the community, I encourage every developer to share their projects with other people to ensure continuity.
 
 
 
