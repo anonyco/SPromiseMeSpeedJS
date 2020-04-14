@@ -1,3 +1,14 @@
+
+[![npm version](http://img.shields.io/npm/v/spromisemespeed.svg?label=version)](https://npmjs.org/package/spromisemespeed "View this project on npm")
+[![GitHub stars](https://img.shields.io/github/stars/anonyco/SPromiseMeSpeedJS.svg?style=social)](https://github.com/anonyco/SPromiseMeSpeedJS/stargazers "View others who have stared this repository")
+[![GitHub file size in bytes](https://img.shields.io/github/size/anonyco/SPromiseMeSpeedJS/dist/SPromiseMeSpeed.min.js.svg?label=without%20gzip)](https://github.com/anonyco/SPromiseMeSpeedJS/blob/master/dist/SPromiseMeSpeed.min.js "File without gzip")
+[![GitHub file size in bytes](https://img.shields.io/github/size/anonyco/SPromiseMeSpeedJS/dist/SPromiseMeSpeed.min.js.gz.svg?label=gzip%20applied)](https://github.com/anonyco/SPromiseMeSpeedJS/blob/master/dist/SPromiseMeSpeed.min.js.gz "Gzipped file")
+[![npm bundle size (version)](https://img.shields.io/bundlephobia/min/spromisemespeed/latest.svg?color=maroon&label=NPM%20bundle%20size)](https://npmjs.org/package/spromisemespeed "View this project on npm")<!--[![Issues](http://img.shields.io/github/issues/anonyco/SPromiseMeSpeedJS.svg)]( https://github.com/anonyco/SPromiseMeSpeedJS/issues )-->
+[![Unlicense license](http://img.shields.io/badge/license-Unlicense-brightgreen.svg)](https://unlicense.org/ "This project's liscence")
+[![npm downloads](https://img.shields.io/npm/dt/spromisemespeed.svg)](https://npmjs.org/package/spromisemespeed "View this project on npm")
+
+
+
 # SPromiseMeSpeed
 SPromiseMeSpeed is currently the fastest [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) javascript library and polyfill, *promising* a speedy implementation that are ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of SPromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance.
 
@@ -115,7 +126,7 @@ Or, one can use the new and shiny [ES6 module importation](https://developer.moz
 
 ```Javascript
     // Variation 1
-    import {encode, decode} from "spromisemespeed";
+    import { SPromise } from "spromisemespeed";
 ```
 
 ```Javascript
