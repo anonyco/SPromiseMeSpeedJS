@@ -1,6 +1,6 @@
 {
 	"name": "spromisemespeed",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "The JavaScript library that promises you the fastest ES6 promises",
 	"keywords": [
 		"javascript",
@@ -36,8 +36,8 @@
 		"build-module": "java -Xms32M -Xmx1024M -jar ./closure-compiler.jar --D DEBUGMODE --source_map_format V3 --js './src/SPromiseMeSpeed.src.module.js' --js_output_file ./dist/SPromiseMeSpeed.min.module.js --create_source_map ./dist/SPromiseMeSpeed.min.module.js.map --compilation_level ADVANCED_OPTIMIZATIONS --output_wrapper '%output%//AnonyCo\n//# sourceMappingURL=https://cdn.jsdelivr.net/gh/AnonyCo/SPromiseMeSpeed/dist/SPromiseMeSpeed.min.module.js.map' --language_out ECMASCRIPT_2017; sed -i -e 's/window\\.export_/export var /g' './dist/SPromiseMeSpeed.min.module.js'",
 		"build-es6": "npm run build-module",
 		"build-gzip": "if [ -f 'zopfli' ]; then cd dist; ../zopfli -i20 SPromiseMeSpeed.min.js; fi",
-		"build-repo-fast": "if [ -d 'src' ] && ! [ -L 'src' ]; then cd dist; ln -fs ../src src; ln -fs ../README.md README.md; ln -fs ../LICENSE LICENSE; ln -fs ../closure-compiler.jar closure-compiler.jar; cp ../package.json ./; sed -i -e 's/\"spromisemespeed\"/\"spromisemespeed-fast\"/; s/--D [D]EBUGMODE//g; s/gh\\/AnonyCo\\/SPromiseMeSpeed/gh\\/AnonyCo\\/SPromiseMeSpeed\\/dist/g' package.json; mkdir -p dist; npm run build; cd ..; rmdir src/src 2> /dev/null; fi",
-		"prepublishOnly": "cd dist; if [ -f 'package.json' ]; then npm publish; fi; cd .."
+		"build-repo-fast": "if ! [ \"${PWD##*/}\" = 'dist' ]; then cd dist; ln -fs ../src src; echo -e 'Please see [spromisemespeed](spromisemespeed) for usage and details' > README.md; ln -fs ../LICENSE LICENSE; ln -fs ../closure-compiler.jar closure-compiler.jar; sed -e 's/\"spromisemespeed(?!\\-fast)\"/\"spromisemespeed-fast\"/; s/--D [D]EBUGMODE//g; s/gh\\/AnonyCo\\/SPromiseMeSpeed/gh\\/AnonyCo\\/SPromiseMeSpeed\\/dist/g' > package.json < '../package.json'; mkdir -p dist; npm run build; cd ..; rmdir src/src 2> /dev/null; fi; exit 0",
+		"prepublishOnly": "cd dist; if [ -f './package.json' ]; then npm publish; fi; cd .."
 	},
 	"license": "Unlicense",
 	"author": {

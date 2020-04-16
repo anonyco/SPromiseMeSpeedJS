@@ -48,7 +48,16 @@ For dropping into either RequireJS or NodeJS, please use [the `spromisemespeed` 
 npm install spromisemespeed
 ```
 
-After installing via npm, one can use `require("spromisemespeed")`. Alternatively, one can drop the *SPromiseMeSpeed.min.js* file into the same directory as their NodeJS script and do `require("./SPromiseMeSpeed.min.js")`. Both methods are functionally equivalent.
+After installing via npm, one can use `require("spromisemespeed")`. Alternatively, one can drop the *SPromiseMeSpeed.min.js* file into the same directory as their NodeJS script and do `require("./SPromiseMeSpeed.min.js")`. Both methods are functionally equivalent. Otherwise, if one do not know how to use the command line, save the script corresponding to one's operating system to the directory where the nodejs script will run and use the file manager to run the script (on Windows, it's a double-click).
+
+
+* fastestsmallesttextencoderdecoder
+    - Microsoft Windows batch: [install-FastestSmallestTextEncoderDecoder-windows.bat](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/install-SPromiseMeSpeedJS-windows.bat)
+    - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-unix.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/install-SPromiseMeSpeedJS-unix.sh)
+* fastestsmallesttextencoderdecoder-encodeinto
+    - Microsoft Windows batch: [install-FastestSmallestTextEncoderDecoder-encodeInto.bat](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeedJS-fast.bat)
+    - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-encodeInto.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeedJS-fast.sh)
+
 
 # API
 SPromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
@@ -424,3 +433,4 @@ rejectThePromise(); // should cause a PromiseRejectionEvent to be emitted, but n
 <!--# Think Before You Pull!
 The purpose of SPromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of SPromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
 -->
+
