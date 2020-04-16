@@ -52,11 +52,11 @@ After installing via npm, one can use `require("spromisemespeed")`. Alternativel
 
 
 * fastestsmallesttextencoderdecoder
-    - Microsoft Windows batch: [install-FastestSmallestTextEncoderDecoder-windows.bat](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/install-SPromiseMeSpeedJS-windows.bat)
-    - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-unix.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/install-SPromiseMeSpeedJS-unix.sh)
+    - Microsoft Windows batch: [install-FastestSmallestTextEncoderDecoder-windows.bat](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/install-SPromiseMeSpeed-windows.bat)
+    - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-unix.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/install-SPromiseMeSpeed-unix.sh)
 * fastestsmallesttextencoderdecoder-encodeinto
-    - Microsoft Windows batch: [install-FastestSmallestTextEncoderDecoder-encodeInto.bat](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeedJS-fast.bat)
-    - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-encodeInto.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeedJS-fast.sh)
+    - Microsoft Windows batch: [install-FastestSmallestTextEncoderDecoder-encodeInto.bat](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeed-fast.bat)
+    - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-encodeInto.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeed-fast.sh)
 
 
 # API
