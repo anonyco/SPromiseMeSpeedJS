@@ -39,7 +39,7 @@
 		"build-repo-fast": "if ! [ \"${PWD##*/}\" = 'dist' ]; then cd dist; ln -fs ../src src; echo -e 'Please see [spromisemespeed](spromisemespeed) for usage and details' > README.md; ln -fs ../LICENSE LICENSE; ln -fs ../closure-compiler.jar closure-compiler.jar; sed -e 's/\"spromisemespeed(?!\\-fast)\"/\"spromisemespeed-fast\"/; s/--D [D]EBUGMODE//g; s/gh\\/AnonyCo\\/SPromiseMeSpeed/gh\\/AnonyCo\\/SPromiseMeSpeed\\/dist/g' > package.json < '../package.json'; mkdir -p dist; npm run build; cd ..; rmdir src/src 2> /dev/null; fi; exit 0",
 		"prepublishOnly": "if ! [ \"${PWD##*/}\" = '.pkg.github' ]; then mkdir -p '.pkg.github'; for f in *; do case $f in '..' | '.' | '.pkg.github' | '.git' | 'package.json') ;; *) ln -fs \"../$f\" './.pkg.github/'; esac; done; cd '.pkg.github'; sed -e 's/'\"$(npm config get registry | sed -e 's/[\\/\\r\\n ]*$//; s/\\//\\\\\\//g')\"'/https\\:\\/\\/npm.pkg.github.com/g' > package.json < '../package.json'; for f in *; do if ! [ -e \"../$f\" ]; then rm -f \"$f\"; fi; done; (npm publish & ); cd ..; cd dist || exit 0; if [ -s 'package.json' ]; then npm publish ; sleep 0.0625; fi; cd ..; wait; fi"
 	},
-	"license": "CC0-1.0",
+	"license": "Unlicense",
 	"author": {
 		"name": "Jack Giffin",
 		"email": "wowzeryest@gmail.com",
@@ -57,6 +57,6 @@
 		"dist/SPromiseMeSpeed.min.js",
 		"dist/SPromiseMeSpeed.min.module.js"
 	],
-	"publishConfig": { "registry": "https://registry.npmjs.org/" }
+	"publishConfig": { "registry": "https://npm.pkg.github.com/" }
 
 }
