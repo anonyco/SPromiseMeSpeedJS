@@ -1,1 +1,0 @@
-../install-SPromiseMeSpeed-unix.sh

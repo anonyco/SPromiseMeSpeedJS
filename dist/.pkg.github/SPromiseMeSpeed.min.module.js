@@ -1,1 +1,0 @@
-../SPromiseMeSpeed.min.module.js

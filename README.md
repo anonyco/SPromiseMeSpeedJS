@@ -4,7 +4,7 @@
 [![GitHub file size in bytes](https://img.shields.io/github/size/anonyco/SPromiseMeSpeedJS/dist/SPromiseMeSpeed.min.js.svg?label=without%20gzip)](https://github.com/anonyco/SPromiseMeSpeedJS/blob/master/dist/SPromiseMeSpeed.min.js "File without gzip")
 [![GitHub file size in bytes](https://img.shields.io/github/size/anonyco/SPromiseMeSpeedJS/dist/SPromiseMeSpeed.min.js.gz.svg?label=gzip%20applied)](https://github.com/anonyco/SPromiseMeSpeedJS/blob/master/dist/SPromiseMeSpeed.min.js.gz "Gzipped file")
 [![npm bundle size (version)](https://img.shields.io/bundlephobia/min/spromisemespeed/latest.svg?color=maroon&label=NPM%20bundle%20size)](https://npmjs.org/package/spromisemespeed "View this project on npm")<!--[![Issues](http://img.shields.io/github/issues/anonyco/SPromiseMeSpeedJS.svg)]( https://github.com/anonyco/SPromiseMeSpeedJS/issues )-->
-[![Unlicense license](http://img.shields.io/badge/license-Unlicense-brightgreen.svg)](https://unlicense.org/ "This project's liscence")
+[![Unlicense license](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/share-your-work/public-domain/cc0/ "This project's liscence")
 [![npm downloads](https://img.shields.io/npm/dt/spromisemespeed.svg)](https://npmjs.org/package/spromisemespeed "View this project on npm")
 
 

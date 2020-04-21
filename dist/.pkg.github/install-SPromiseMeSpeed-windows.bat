@@ -1,1 +1,0 @@
-../install-SPromiseMeSpeed-windows.bat
