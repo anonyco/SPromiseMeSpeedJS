@@ -4,7 +4,7 @@
 [![GitHub file size in bytes](https://img.shields.io/github/size/anonyco/SPromiseMeSpeedJS/dist/SPromiseMeSpeed.min.js.svg?label=without%20gzip)](https://github.com/anonyco/SPromiseMeSpeedJS/blob/master/dist/SPromiseMeSpeed.min.js "File without gzip")
 [![GitHub file size in bytes](https://img.shields.io/github/size/anonyco/SPromiseMeSpeedJS/dist/SPromiseMeSpeed.min.js.gz.svg?label=gzip%20applied)](https://github.com/anonyco/SPromiseMeSpeedJS/blob/master/dist/SPromiseMeSpeed.min.js.gz "Gzipped file")
 [![npm bundle size (version)](https://img.shields.io/bundlephobia/min/spromisemespeed/latest.svg?color=maroon&label=NPM%20bundle%20size)](https://npmjs.org/package/spromisemespeed "View this project on npm")<!--[![Issues](http://img.shields.io/github/issues/anonyco/SPromiseMeSpeedJS.svg)]( https://github.com/anonyco/SPromiseMeSpeedJS/issues )-->
-[![Unlicense license](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/share-your-work/public-domain/cc0/ "This project's liscence")
+[![CC0 license](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/share-your-work/public-domain/cc0/ "This project's liscence")
 [![npm downloads](https://img.shields.io/npm/dt/spromisemespeed.svg)](https://npmjs.org/package/spromisemespeed "View this project on npm")
 
 
@@ -393,8 +393,7 @@ npm run build
 
 ## Continuity
 
-I try my best to be a realist, and what's more realistic than death? I am going to die someday and it may be tomorrow in a car crash. You never know. As I have no coder freinds to look out for my projects, I'm looking for anyone who wants to be a collaborator on this project in the event of the unforseen. Reach out to me at wowzeryest@gmail.com. If issues/pulls start piling up over the course of months, assume the worst. As I am trying my best to do my part to help the community, I encourage every developer to share their projects with other people to ensure continuity.
-
+Feel free to reach out to me at wowzeryest@gmail.com.  I am fairly attentive to my github account, but in the unlikely event that  issues/pulls start piling up, I of course welcome others to step in and contribute.  I am widely open to input and collaboration from anyone on all of my projects.
 
 
 <!--# SPromiseMeSpeedAdvancedEnumerations.js
