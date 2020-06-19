@@ -10,7 +10,7 @@
 
 
 # SPromiseMeSpeed
-SPromiseMeSpeed is currently the fastest [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) javascript library and polyfill, *promising* a speedy implementation that are ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of SPromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance.
+SPromiseMeSpeed is currently the fastest [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) javascript library and polyfill, *promising* a speedy implementation that is ~1-59x faster than Chrome's native promises and ~2-548x faster than Bluebird's promises (five hundread and fourty eight is not a typo). The purpose of SPromiseMeSpeed is to provide a speedy alternative to ES6 promises until browsers implement faster native promises. If all you need is a way to defer the stack level so you don't get the dreaded "Maximum Stack Call Exceeded" error, then consider using my other library, [DeferStackJS](https://github.com/anonyco/DeferStackJS/), for slightly better performance.
 
 # Quick Start
 
@@ -18,7 +18,7 @@ To use, simply drop the following snippet of HTML code into your `<head>` before
 ```HTML
 <script src="https://dl.dropboxusercontent.com/s/llt6sv7y2yurn2v/SPromiseMeSpeedDEBUG.min.js?dl=0"></script>
 ```
-Or, alternatively if you want faster page loading, add a defer to every script to let the browser know that you don't call evil `document.write` inside your script.<br /><br />
+Or, alternatively, if you want faster page loading, add a defer to every script to let the browser know that you don't call evil `document.write` inside your script.<br /><br />
 *Before:*
 ```HTML
 <!doctype HTML>
@@ -65,8 +65,8 @@ SPromiseMeSpeed gives you one and only one new global on the window object: `win
 1. It is called without the `new` operator.
 1. All callbacks are invoked immediately after the promise is resolved without waiting until the next tick.
 1. It has a `window.SPromise.isPromise` method you can use to determine if something is a promise.
-1. It is a lot faster than native Chromium promises, even with (suprise, suprise!) `await`.
-1. It skims and cuts corners to boost performance by reusing the same reference pased to callbacks as the source.
+1. It is a lot faster than native Chromium promises, even with (surprise, surprise!) `await`.
+1. It skims and cuts corners to boost performance by reusing the same reference passed to callbacks as the source.
 
 Example code snippets:
 ```HTML
@@ -373,11 +373,11 @@ SPromiseR1: 0.016039496535490295ms
 SPromiseR2: 0.010410156290971728ms
 SPromiseR3: 0.010818142375986403ms
 ```
-[Caution: please don't read the follow paragraph if you are easily disturbed by vivid images of emesis. Also note that this paragraph has been a bit less applicable since Chrome's `await` recieved internal optimizations.] The signifigance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tastey (fast and performant) enough for Chrome to swallow it with greater efficiency.
+[Caution: Please don't read the following paragraph if you are easily disturbed by vivid images of emesis. Also, note that this paragraph has been a bit less applicable since Chrome's `await` recieved internal optimizations.] The significance of the above tests is that trying to force a native method like `await` into using a user-created function like `SPromise` is comparable to trying to swallow someone else's barf. If you are going to swallow barf (as in `await`), you would likely want to swallow your own *native* barf instead of trying to swallow the barf of someone else (like Bluebird or SPromise). Yet in spite of this, SPromise makes the barf tasty (fast and performant) enough for Chrome to swallow it with greater efficiency.
 
 ## Development
 
-On linux, the project can be developed by cloning it with the following command line.
+On Linux, the project can be developed by cloning it with the following command line.
 
 ```Bash
 git clone https://github.com/anonyco/SPromiseMeSpeedJS.git; cd SPromiseMeSpeedJS; npm run install-dev
@@ -393,12 +393,12 @@ npm run build
 
 ## Continuity
 
-Feel free to reach out to me at wowzeryest@gmail.com.  I am fairly attentive to my github account, but in the unlikely event that  issues/pulls start piling up, I of course welcome others to step in and contribute.  I am widely open to input and collaboration from anyone on all of my projects.
+Feel free to reach out to me at wowzeryest@gmail.com.  I am fairly attentive to my GitHub account, but in the unlikely event that issues/pulls start piling up, I of course welcome others to step in and contribute.  I am widely open to input and collaboration from anyone on all of my projects.
 
 
 <!--# SPromiseMeSpeedAdvancedEnumerations.js
 
-For a separate project I am using SPromiseMeSpeed in, the default ECMAScript specification for promises is just simply too slow for my purposes. Thus, I have revised the whole thing to use lickety-fast enumerations. However, for this script, do not ever do `<script src="SPromiseMeSpeedAdvancedEnumerations.js"></script>` as that will make your code really slow. Also do not use distribute this script unminified or without the `DEBUGMODE` variable not set to `true` as that will make your code really slow too. The way to use this script is to insert it into the scope of your actual script and minify it along with the rest of your script to increase performance to the limit. An example usage of this script is as follows.
+For a separate project I am using SPromiseMeSpeed in, the default ECMAScript specification for promises is just simply too slow for my purposes. Thus, I have revised the whole thing to use lickety-fast enumerations. However, for this script, do not ever do `<script src="SPromiseMeSpeedAdvancedEnumerations.js"></script>` as that will make your code really slow. Also do not use distribute this script unminified or without the `DEBUGMODE` variable not set to `true` as that will make your code really slow too. The way to use this script is to insert it into the scope of your actual script and minify it along with the rest of your script to increase performance to the limit. Example usage of this script is as follows.
 
 ```Javascript
 SPromise_all(
@@ -416,7 +416,7 @@ SPromise_all(
 ```-->
 
 <!--# PromiseRejectionEvent
-The current spec for Promises wants there to be a PromiseRejectionEvent. SPromise will asynchronously (via setTimeout) fire a PromiseRejectionEvent on the window object when there is a Promise that fails and has nothing to handle the failure. However, SPromise slightly deviates from this specification for the purposes of performance in so much that SPromise treats internal triggers from `Promise.all` and `Promise.race` same as ordinary handles. Thus, when a promise is rejected, but you called race/all on the promise, the promise wrongly never fires a PromiseRejectionEvent event. This is a known bug, but it will never be fixed because of the overhead involved in adding extra checks that verify whether a catch handler is internal or external. Further, any fix for this bug would only apply apply to SPromises: there would be no (reasonable/sane) way to patch calling native Promise.all on an array of SPromises that are about to be rejected. Observe.
+The current spec for Promises wants there to be a PromiseRejectionEvent. SPromise will asynchronously (via setTimeout) fire a PromiseRejectionEvent on the window object when there is a Promise that fails and has nothing to handle the failure. However, SPromise slightly deviates from this specification for the purposes of performance in so much that SPromise treats internal triggers from `Promise.all` and `Promise.race` same as ordinary handles. Thus, when a promise is rejected, but you called race/all on the promise, the promise wrongly never fires a PromiseRejectionEvent event. This is a known bug, but it will never be fixed because of the overhead involved in adding extra checks that verify whether a catch handler is internal or external. Further, any fix for this bug would only apply to SPromises: there would be no (reasonable/sane) way to patch calling native Promise.all on an array of SPromises that are about to be rejected. Observe.
 
 ```Javascript
 // This demonstrates one of the many minor ways that SPromise deviates from the specification
@@ -430,6 +430,6 @@ rejectThePromise(); // should cause a PromiseRejectionEvent to be emitted, but n
 ```-->
 
 <!--# Think Before You Pull!
-The purpose of SPromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of SPromiseMeSpeed is **not** to be a full featured Golliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
+The purpose of SPromiseMeSpeed is to be a transitional speed-polyfill to bridge the gap between current browser promise performance and native browser promise performance. The purpose of SPromiseMeSpeed is **not** to be a full-featured Goliath standing over 100+kb in size. Do not open up any pull requests or commits suggesting new features or promise utilities. Even if they may be good ideas, I will never integrate them into this library. Rather, you should fork this library and then put all of your changes into that fork instead. Or, alternatively, you can just use BlueBird instead. In any event, it would be pointless for the creator of this library to be working on any extra promise utilies since he is currently creating something that will make every library in every language obsolete.
 -->
 
