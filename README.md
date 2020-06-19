@@ -59,7 +59,7 @@ After installing via npm, one can use `require("spromisemespeed")`. Alternativel
     - Bash for Apple MacOS and Linux (e.x. Ubuntu): [install-FastestSmallestTextEncoderDecoder-encodeInto.sh](https://raw.githubusercontent.com/anonyco/SPromiseMeSpeedJS/master/dist/dist/install-SPromiseMeSpeed-fast.sh)
 
 
-# API
+# API: Differences From Native Promises
 SPromiseMeSpeed gives you one and only one new global on the window object: `window.SPromise`. `window.SPromise` is the exact same as the native `window.Promise` as documented by MDN EXCEPT:
 
 1. It is called without the `new` operator.
